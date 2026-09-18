@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "mcgf",
+  "version": "${version}",
+  "name": "MCGF AI Companion",
+  "description": "AI ban dong hanh cho Minecraft 1.21.1 Java Edition (Fabric). Module 1: core + config + lenh /gf.",
+  "authors": ["Khoand-ed"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.khoand.mcgf.MinecraftGFMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  },
+  "custom": {
+    "mcgf:modules": ["m1-core"]
+  }
+}

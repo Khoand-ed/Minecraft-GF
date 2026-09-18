@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# IntelliJ / VSCode
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# Minecraft / Loom cache
+run/
+remappedJars/
+
+# OS / Java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+.DS_Store
+Thumbs.db
+
+# Secrets — KHONG commit key AI
+config/mcgf.json
+.env
