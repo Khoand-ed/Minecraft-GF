@@ -7,8 +7,8 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 
 ## Lộ trình module (làm từng bước, bạn kiểm tra từng bước)
 
-- [x] **M1 — Core (hiện tại):** scaffold Fabric 1.21.1, config `config/mcgf.json`, lệnh `/gf help|hello|version|name|say`
-- [ ] **M2 — Follow/Move:** companion đi theo, `/gf follow|stay|goto`, pathfinding cơ bản
+- [x] **M1 — Core:** scaffold Fabric 1.21.1, config `config/mcgf.json`, lệnh `/gf help|hello|version|name|say`
+- [x] **M2 — Follow (hiện tại):** companion sói đi theo, `/gf spawn|follow|stay|here|goto|dismiss`, tự teleport khi lạc
 - [ ] **M3 — Chat AI:** Gemini (miễn phí) + fallback offline, prefix `@gf`, tiếng Việt
 - [ ] **M4 — Sinh tồn:** đào, nhặt đồ, đánh quái, tự ăn, `/gf mine|attack|collect`
 - [ ] **M5 — Polish:** GUI config, persist, build release `.jar`
@@ -22,58 +22,64 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - JDK **21** (`java -version` phải ra 21)
 - Gradle 8.10.2 (dùng `./gradlew` kèm theo, lần đầu cần mạng để tải MC + mappings)
 
-## Chạy thử Module 1
+## Chạy thử Module 2
 
 ```powershell
-# 1. Mở thư mục dự án
 cd D:\MCGF
-
-# 2a. Lần đầu: tải wrapper jar (chỉ cần 1 lần, cần mạng)
-# Nếu chưa có gradle/wrapper/gradle-wrapper.jar, tải bằng Python:
-python -c "import urllib.request; urllib.request.urlretrieve('https://github.com/gradle/gradle/raw/master/gradle/wrapper/gradle-wrapper.jar','gradle/wrapper/gradle-wrapper.jar')"
-
-# 2b. Build mod
 .\gradlew.bat build
-
-# 3. File jar nằm ở:
-# build/libs/mcgf-ai-companion-0.1.0-m1.jar
-# Copy vào .minecraft/mods/ (profile Fabric 1.21.1) rồi mở game.
+# build/libs/mcgf-ai-companion-0.2.0-m2.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
 ```
-
-Hoặc mở bằng IntelliJ IDEA → Open → chọn `D:\MCGF` → đợi sync → Run `Minecraft Client`.
 
 ## Test trong game (Singleplayer, cheats ON hoặc OP)
 
 ```
 /gf help
-/gf hello
-/gf version
-/gf name Luna
-/gf say xin chào mọi người
+/gf spawn      # gọi companion sói ra, tự thuần + đặt tên
+/gf follow     # đi theo + đánh quái cùng bạn
+/gf stay       # ngồi yên
+/gf here       # kéo về cạnh bạn
+/gf goto 100 64 200   # đến tọa độ và đứng yên
+/gf dismiss    # cho biến mất
+/gf name Luna  # đổi tên (cả bảng tên trên đầu sói)
+/gf version    # phải ra 0.2.0-m2
 ```
 
 Kết quả đúng:
-- Hiện `[MCGF]` / `[GF]` (hoặc tên mới) màu xanh.
-- File `config/mcgf.json` tự tạo, ví dụ:
+- Sói hiện ra cạnh bạn, trên đầu có tên (mặc định `GF`), tự đi theo.
+- Đánh quái tấn công bạn (AI sói vanilla) — M4 sẽ nâng cấp thêm.
+- Lạc quá `teleportDistance` (mặc định 24 block) thì tự teleport về.
+- File `config/mcgf.json` có thêm `teleportDistance`:
 ```json
 {
   "companionName": "GF",
   "chatPrefix": "@gf",
   "followDistance": 3.0,
+  "teleportDistance": 24.0,
   "replyInVietnamese": true,
   "geminiApiKey": "",
   "geminiModel": "gemini-2.0-flash"
 }
 ```
 
-## Cấu trúc Module 1
+## Test Module 1 (cũ)
+
+```
+/gf hello
+/gf say xin chào mọi người
+```
+
+## Cấu trúc Module 2
 
 ```
 settings.gradle / build.gradle / gradle.properties
 src/main/java/com/khoand/mcgf/
-  MinecraftGFMod.java  — entrypoint
-  GfConfig.java        — config json
-  GfCommands.java      — /gf
+  MinecraftGFMod.java      — entrypoint + server tick (auto-teleport)
+  GfClient.java            — client: đăng ký renderer sói
+  GfEntities.java          — EntityType mcgf:companion
+  GfCompanionEntity.java   — entity kế thừa WolfEntity (máu 40, tốc 0.35, dmg 4)
+  GfCompanionManager.java  — spawn/follow/stay/goto/here/dismiss
+  GfConfig.java            — config json (+ teleportDistance)
+  GfCommands.java          — /gf (M1 + M2)
 src/main/resources/fabric.mod.json
 ```
 
@@ -82,7 +88,11 @@ src/main/resources/fabric.mod.json
 - Dùng Yarn `1.21.1+build.3`, Loom `1.7.4`, `options.release = 21`.
 - Lệnh dùng `CommandRegistrationCallback` (Fabric API v2) — chuẩn cho 1.21.1.
 - `environment: "*"` để chạy cả client + dedicated server.
+- Companion kế thừa `WolfEntity`: tái dùng AI follow/tấn công + renderer sói vanilla,
+  không cần model/texture riêng → nhẹ, ổn định, hợp cả client lẫn server.
+  M4 có thể thay bằng entity custom hoàn toàn nếu bạn muốn ngoại hình riêng.
 
-## Bước tiếp theo (M2, chưa làm)
+## Bước tiếp theo (M3, chưa làm)
 
-Hỏi bạn trước khi code: companion là **fake-player đi theo** hay **mob pet (kiểu sói/golem)**? Mặc định tôi sẽ làm fake-player đơn giản + `/gf follow|stay`.
+Chat AI: gõ `@gf <câu hỏi>` trên chat → gọi Gemini, fallback offline khi chưa có key.
+Bạn chuẩn bị sẵn Gemini API key (miễn phí) để test M3.

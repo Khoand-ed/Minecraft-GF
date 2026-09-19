@@ -58,6 +58,8 @@ public final class GfConfig {
         public String companionName = "GF";
         public String chatPrefix = "@gf";
         public double followDistance = 3.0;
+        /** Qua khoang cach nay (block) thi tu dich chuyen ve canh chu. */
+        public double teleportDistance = 24.0;
         public boolean replyInVietnamese = true;
         public String geminiApiKey = "";
         public String geminiModel = "gemini-2.0-flash";
