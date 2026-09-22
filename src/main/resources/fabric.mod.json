@@ -3,7 +3,7 @@
   "id": "mcgf",
   "version": "${version}",
   "name": "MCGF AI Companion",
-  "description": "AI ban dong hanh cho Minecraft 1.21.1 Java Edition (Fabric). Module 2: companion di theo + lenh /gf.",
+  "description": "AI ban dong hanh cho Minecraft 1.21.1 Java Edition (Fabric). Module 3: chat AI Gemini + offline.",
   "authors": ["Khoand-ed"],
   "license": "MIT",
   "environment": "*",
@@ -18,6 +18,6 @@
     "java": ">=21"
   },
   "custom": {
-    "mcgf:modules": ["m1-core", "m2-follow"]
+    "mcgf:modules": ["m1-core", "m2-follow", "m3-chat"]
   }
 }

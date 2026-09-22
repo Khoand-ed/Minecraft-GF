@@ -61,6 +61,10 @@ public final class GfConfig {
         /** Qua khoang cach nay (block) thi tu dich chuyen ve canh chu. */
         public double teleportDistance = 24.0;
         public boolean replyInVietnamese = true;
+        /** Module 3 — bat/tat AI. Tat thi chi tra loi offline. */
+        public boolean aiEnabled = true;
+        /** So cap hoi-dap gan nhat giu lai lam context cho AI. */
+        public int maxHistory = 8;
         public String geminiApiKey = "";
         public String geminiModel = "gemini-2.0-flash";
     }

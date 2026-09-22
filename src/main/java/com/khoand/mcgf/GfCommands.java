@@ -9,19 +9,25 @@ import net.minecraft.text.Text;
 
 /**
  * Module 1 — Lenh /gf co ban. Module 2 — Lenh companion follow.
+ * Module 3 — Lenh AI: ask, ai on/off, forget, apikey.
  *
  * <pre>
  * /gf help              — xem tro giup
  * /gf hello             — test companion tra loi
  * /gf version           — xem version
  * /gf name &lt;ten&gt;        — doi ten companion (luu config)
- * /gf say &lt;noi dung&gt;    — companion nhac lai (Module 3 se thay bang LLM)
+ * /gf say &lt;noi dung&gt;    — companion nhac lai
  * /gf spawn             — goi companion ra (M2)
  * /gf follow            — di theo (M2)
  * /gf stay              — ngoi yen (M2)
  * /gf here              — keo ve canh ban (M2)
  * /gf goto &lt;x&gt; &lt;y&gt; &lt;z&gt;  — den toa do va dung yen (M2)
  * /gf dismiss           — cho bien mat (M2)
+ * /gf ask &lt;cau hoi&gt;     — hoi AI (M3, nhu chat @gf)
+ * /gf ai on|off         — bat/tat AI online (M3, can OP)
+ * /gf forget            — xoa tri nho hoi-dap (M3)
+ * /gf apikey &lt;key&gt;     — nap key Gemini (M3, can OP, luu config)
+ * Chat: @gf &lt;cau hoi&gt;    — hoi AI ngay trên chat (M3)
  * </pre>
  */
 public final class GfCommands {
@@ -39,19 +45,21 @@ public final class GfCommands {
                             return 1;
                         })
                         .then(CommandManager.literal("help").executes(ctx -> {
+                            String ai = GfBrain.isOnlineReady() ? "online (Gemini)" : "offline (chua co key)";
                             ctx.getSource().sendFeedback(() -> Text.literal(
-                                    "§b[MCGF] Lenhs:\n"
+                                    "§b[MCGF] Lenhs (AI: " + ai + "):\n"
                                             + "§e/gf hello§r — chao companion\n"
                                             + "§e/gf version§r — version mod\n"
                                             + "§e/gf name <ten>§r — doi ten\n"
-                                            + "§e/gf say <text>§r — nhac lai (tam, M3=AI)\n"
-                                            + "§e/gf spawn§r — goi companion\n"
-                                            + "§e/gf follow§r — di theo\n"
-                                            + "§e/gf stay§r — ngoi yen\n"
-                                            + "§e/gf here§r — keo ve canh ban\n"
+                                            + "§e/gf say <text>§r — nhac lai\n"
+                                            + "§e/gf spawn|follow|stay|here|dismiss§r — dieu companion\n"
                                             + "§e/gf goto <x> <y> <z>§r — den toa do\n"
-                                            + "§e/gf dismiss§r — cho bien mat\n"
-                                            + "§7M3=AI chat, M4=sinh ton§r"),
+                                            + "§e@gf <cau hoi>§r — chat voi AI (prefix hien tai)\n"
+                                            + "§e/gf ask <cau hoi>§r — hoi AI\n"
+                                            + "§e/gf forget§r — xoa tri nho\n"
+                                            + "§e/gf ai on|off§r — bat/tat AI (OP)\n"
+                                            + "§e/gf apikey <key>§r — nap key Gemini (OP)\n"
+                                            + "§7M4=sinh ton§r"),
                                     false);
                             return 1;
                         }))
@@ -59,13 +67,13 @@ public final class GfCommands {
                             String name = GfConfig.get().companionName;
                             ctx.getSource().sendFeedback(
                                     () -> Text.literal("§b[" + name + "]§r Xin chao! Dung /gf spawn de goi toi ra, "
-                                            + "/gf follow de toi di theo ban!"),
+                                            + "chat " + GfConfig.get().chatPrefix + " <cau hoi> de tro chuyen!"),
                                     false);
                             return 1;
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 0.2.0-m2 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 0.3.0-m3 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -91,7 +99,6 @@ public final class GfCommands {
                                         .executes(ctx -> {
                                             String text = StringArgumentType.getString(ctx, "noidung");
                                             String name = GfConfig.get().companionName;
-                                            // Tam echo — Module 3 se goi Gemini o day.
                                             ctx.getSource().sendFeedback(
                                                     () -> Text.literal("§b[" + name + "]§r " + text),
                                                     false);
@@ -155,6 +162,66 @@ public final class GfCommands {
                             }
                             return GfCompanionManager.dismiss(player);
                         }))
+                        // ---- Module 3: AI ----
+                        .then(CommandManager.literal("ask")
+                                .then(CommandManager.argument("cauhoi", StringArgumentType.greedyString())
+                                        .executes(ctx -> {
+                                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                                            if (player == null) {
+                                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                                return 0;
+                                            }
+                                            GfBrain.ask(player, StringArgumentType.getString(ctx, "cauhoi"));
+                                            return 1;
+                                        })))
+                        .then(CommandManager.literal("forget").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            GfBrain.clearHistory(player);
+                            ctx.getSource().sendFeedback(
+                                    () -> Text.literal("§b[MCGF]§r Da xoa tri nho hoi-dap."),
+                                    false);
+                            return 1;
+                        }))
+                        .then(CommandManager.literal("ai")
+                                .requires(src -> src.hasPermissionLevel(2))
+                                .then(CommandManager.argument("chedo", StringArgumentType.word()).executes(ctx -> {
+                                    String chedo = StringArgumentType.getString(ctx, "chedo");
+                                    if (chedo.equalsIgnoreCase("on")) {
+                                        GfConfig.get().aiEnabled = true;
+                                        GfConfig.save();
+                                        ctx.getSource().sendFeedback(
+                                                () -> Text.literal("§b[MCGF]§r Da BAT AI online."),
+                                                false);
+                                        return 1;
+                                    }
+                                    if (chedo.equalsIgnoreCase("off")) {
+                                        GfConfig.get().aiEnabled = false;
+                                        GfConfig.save();
+                                        ctx.getSource().sendFeedback(
+                                                () -> Text.literal("§b[MCGF]§r Da TAT AI online (chi tra loi offline)."),
+                                                false);
+                                        return 1;
+                                    }
+                                    ctx.getSource().sendError(Text.literal("Dung: /gf ai on|off"));
+                                    return 0;
+                                })))
+                        .then(CommandManager.literal("apikey")
+                                .requires(src -> src.hasPermissionLevel(2))
+                                .then(CommandManager.argument("key", StringArgumentType.word()).executes(ctx -> {
+                                    String key = StringArgumentType.getString(ctx, "key");
+                                    GfConfig.get().geminiApiKey = key;
+                                    GfConfig.save();
+                                    String masked = key.length() > 4 ? "****" + key.substring(key.length() - 4) : "****";
+                                    ctx.getSource().sendFeedback(
+                                            () -> Text.literal("§b[MCGF]§r Da luu key Gemini (" + masked
+                                                    + "). Chat " + GfConfig.get().chatPrefix + " <cau hoi> de thu!"),
+                                            false);
+                                    return 1;
+                                })))
         ));
     }
 }

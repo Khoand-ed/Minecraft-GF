@@ -17,10 +17,11 @@ public class MinecraftGFMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("[MCGF] Module 1+2 init: Minecraft 1.21.1 AI Companion");
+        LOGGER.info("[MCGF] Module 1+2+3 init: Minecraft 1.21.1 AI Companion");
         GfConfig.load();
         GfEntities.register();
         GfCommands.register();
+        GfBrain.register();
         // Moi 20 tick (~1 giay) keo companion bi lac ve gan chu.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (++tickCounter < 20) {
