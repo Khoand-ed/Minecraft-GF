@@ -9,8 +9,8 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 
 - [x] **M1 — Core:** scaffold Fabric 1.21.1, config `config/mcgf.json`, lệnh `/gf help|hello|version|name|say`
 - [x] **M2 — Follow:** companion sói đi theo, `/gf spawn|follow|stay|here|goto|dismiss`, tự teleport khi lạc
-- [x] **M3 — Chat AI (hiện tại):** chat `@gf <câu hỏi>`, Gemini online + fallback offline, `/gf ask|ai|forget|apikey`
-- [ ] **M4 — Sinh tồn:** đào, nhặt đồ, đánh quái, tự ăn, `/gf mine|attack|collect`
+- [x] **M3 — Chat AI:** chat `@gf <câu hỏi>`, Gemini online + fallback offline, `/gf ask|ai|forget|apikey`
+- [x] **M4 — Sinh tồn (hiện tại):** `/gf attack|stop|mine|collect|feed`, tự hồi máu ngoài giao tranh
 - [ ] **M5 — Polish:** GUI config, persist, build release `.jar`
 
 **Quy tắc:** xong 1 module → bạn test → OK mới làm module tiếp. Chưa push khi bạn chưa duyệt.
@@ -22,13 +22,30 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - JDK **21** (`java -version` phải ra 21)
 - Gradle 8.10.2 (dùng `./gradlew` kèm theo, lần đầu cần mạng để tải MC + mappings)
 
-## Chạy thử Module 2
+## Chạy thử Module 4
 
 ```powershell
 cd D:\MCGF
 .\gradlew.bat build
-# build/libs/mcgf-ai-companion-0.3.0-m3.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
+# build/libs/mcgf-ai-companion-0.4.0-m4.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
 ```
+
+## Sinh tồn cùng companion (Module 4, cần `/gf spawn` trước)
+
+```
+/gf attack    # đánh quái hostile gần nhất (16 block)
+/gf stop      # dừng đánh, quay về theo bạn
+/gf mine      # nhìn vào block (trong 6 block) rồi gọi → pet đào giúp, rớt đồ thật
+/gf collect   # hút đồ rơi + xp trong 10 block vào túi bạn
+/gf feed      # cho pet ăn thịt trong túi bạn để hồi máu
+```
+
+Kết quả đúng:
+- `/gf attack` → sói lao vào cắn quái, chat báo tên quái.
+- `/gf mine` → block vỡ, rớt đồ như tự đào (bedrock báo không đào được).
+- `/gf collect` → đồ bay vào túi, báo số đống + xp.
+- Pet mất máu ngoài giao tranh tự hồi 1 máu/5 giây (kèm hạt vui vẻ).
+- Hỏi AI cũng được: `@gf làm sao cho bạn ăn?` → AI chỉ `/gf feed`.
 
 ## Chat AI với companion (Module 3)
 
@@ -91,19 +108,20 @@ Kết quả đúng:
 /gf say xin chào mọi người
 ```
 
-## Cấu trúc Module 3
+## Cấu trúc Module 4
 
 ```
 settings.gradle / build.gradle / gradle.properties
 src/main/java/com/khoand/mcgf/
-  MinecraftGFMod.java      — entrypoint + server tick (auto-teleport) + GfBrain
+  MinecraftGFMod.java      — entrypoint + server tick (auto-teleport + auto-heal)
   GfBrain.java             — nghe chat @gf, gọi Gemini async, fallback offline
+  GfSurvival.java          — attack/stop/mine/collect/feed/tickHeal
   GfClient.java            — client: đăng ký renderer sói
   GfEntities.java          — EntityType mcgf:companion
   GfCompanionEntity.java   — entity kế thừa WolfEntity (máu 40, tốc 0.35, dmg 4)
   GfCompanionManager.java  — spawn/follow/stay/goto/here/dismiss
   GfConfig.java            — config json (+ aiEnabled, maxHistory, geminiApiKey)
-  GfCommands.java          — /gf (M1 + M2 + M3: ask/ai/forget/apikey)
+  GfCommands.java          — /gf (M1-M4)
 src/main/resources/fabric.mod.json
 ```
 
@@ -118,8 +136,10 @@ src/main/resources/fabric.mod.json
 - Chat AI gọi Gemini qua `java.net.http` (JDK sẵn, không thêm dependency),
   chạy thread riêng + `server.execute()` trả lời → không lag server.
   Key chỉ nằm ở `config/mcgf.json` local (đã gitignore).
+- Sinh tồn tôn trọng luật survival: đào bằng `tryBreakBlock` (rớt đồ/mòn tool thật),
+  ăn thịt thật từ túi chủ, nhặt đồ bằng `insertStack` vào túi chủ.
 
-## Bước tiếp theo (M4, chưa làm)
+## Bước tiếp theo (M5, chưa làm)
 
-Sinh tồn: companion tự đào mỏ, nhặt đồ, đánh quái theo lệnh, tự ăn hồi máu.
-Lệnh dự kiến: `/gf mine`, `/gf attack`, `/gf collect`.
+Polish: màn hình config trong game (Mod Menu), lưu trí nhớ AI,
+build release `.jar` đăng GitHub Releases.

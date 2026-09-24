@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 /**
  * Module 1 — Lenh /gf co ban. Module 2 — Lenh companion follow.
  * Module 3 — Lenh AI: ask, ai on/off, forget, apikey.
+ * Module 4 — Lenh sinh ton: attack, stop, mine, collect, feed.
  *
  * <pre>
  * /gf help              — xem tro giup
@@ -28,6 +29,11 @@ import net.minecraft.text.Text;
  * /gf forget            — xoa tri nho hoi-dap (M3)
  * /gf apikey &lt;key&gt;     — nap key Gemini (M3, can OP, luu config)
  * Chat: @gf &lt;cau hoi&gt;    — hoi AI ngay trên chat (M3)
+ * /gf attack            — danh quai gan nhat (M4)
+ * /gf stop              — dung danh (M4)
+ * /gf mine              — dao block dang nhin (M4)
+ * /gf collect           — nhat do roi quanh ban (M4)
+ * /gf feed              — cho an thit tu tui ban (M4)
  * </pre>
  */
 public final class GfCommands {
@@ -59,7 +65,11 @@ public final class GfCommands {
                                             + "§e/gf forget§r — xoa tri nho\n"
                                             + "§e/gf ai on|off§r — bat/tat AI (OP)\n"
                                             + "§e/gf apikey <key>§r — nap key Gemini (OP)\n"
-                                            + "§7M4=sinh ton§r"),
+                                            + "§e/gf attack§r — danh quai gan nhat\n"
+                                            + "§e/gf stop§r — dung danh\n"
+                                            + "§e/gf mine§r — dao block dang nhin\n"
+                                            + "§e/gf collect§r — nhat do roi\n"
+                                            + "§e/gf feed§r — cho an"),
                                     false);
                             return 1;
                         }))
@@ -73,7 +83,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 0.3.0-m3 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 0.4.0-m4 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -161,6 +171,47 @@ public final class GfCommands {
                                 return 0;
                             }
                             return GfCompanionManager.dismiss(player);
+                        }))
+                        // ---- Module 4: sinh ton ----
+                        .then(CommandManager.literal("attack").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfSurvival.attack(player);
+                        }))
+                        .then(CommandManager.literal("stop").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfSurvival.stop(player);
+                        }))
+                        .then(CommandManager.literal("mine").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfSurvival.mine(player);
+                        }))
+                        .then(CommandManager.literal("collect").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfSurvival.collect(player);
+                        }))
+                        .then(CommandManager.literal("feed").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfSurvival.feed(player);
                         }))
                         // ---- Module 3: AI ----
                         .then(CommandManager.literal("ask")

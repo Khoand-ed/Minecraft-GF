@@ -209,7 +209,9 @@ public final class GfBrain {
                 + "Tính cách vui vẻ, trung thành, nói tiếng Việt ngắn gọn dưới 200 ký tự, không dùng markdown. "
                 + context + " "
                 + "Các lệnh của bạn: /gf spawn (gọi ra), /gf follow (đi theo), /gf stay (ngồi yên), "
-                + "/gf here (kéo về), /gf goto x y z (đến tọa độ), /gf dismiss (cho về). "
+                + "/gf here (kéo về), /gf goto x y z (đến tọa độ), /gf dismiss (cho về), "
+                + "/gf attack (đánh quái gần nhất), /gf stop (dừng đánh), "
+                + "/gf mine (đào block đang nhìn), /gf collect (nhặt đồ rơi), /gf feed (cho ăn thịt). "
                 + "Khi được hỏi cách chơi, hướng dẫn ngắn gọn đúng các lệnh này.";
     }
 
@@ -246,14 +248,21 @@ public final class GfBrain {
         if (contains(q, "ngồi", "ngoi", "stay", "đứng yên", "dung yen", "dừng")) {
             return "Ok, gõ /gf stay là tui ngồi yên tại chỗ liền!";
         }
-        if (contains(q, "đánh", "danh", "quái", "quai", "creeper", "zombie", "skeleton", "nhện", "nhen", "chiến")) {
-            return "Tui tự cắn quái nào dám đánh bạn đó! Nhớ cho tui ăn thịt để hồi máu nha. (M4 tui còn đánh xịn hơn!)";
+        if (contains(q, "đánh", "danh", "quái", "quai", "creeper", "zombie", "skeleton", "nhện", "nhen", "chiến", "attack")) {
+            return "Gõ /gf attack là tui lao vào cắn quái gần nhất! Đánh xong gõ /gf stop để tui quay về. Tui cũng tự cắn đứa nào dám đánh bạn đó!";
         }
         if (contains(q, "đào", "dao", "mine", "cuốc", "cuoc", "kim cương", "kim cuong", "sắt", "sat")) {
-            return "Vụ đào mỏ để M4 tui học nha, giờ tui chỉ biết đi theo và bảo vệ bạn thôi!";
+            return "Nhìn vào block cần đào (trong 6 block) rồi gõ /gf mine, tui đào giúp! Nhớ gọi /gf here cho tui lại gần trước nha!";
+        }
+        if (contains(q, "ăn", "an", "feed", "máu", "mau", "hồi", "hoi", "đói", "doi", "thịt", "thit")) {
+            return "Bỏ thịt vào túi bạn rồi gõ /gf feed là tui ăn và hồi máu! Ngoài giao tranh tui cũng tự hồi máu từ từ.";
+        }
+        if (contains(q, "nhặt", "nhat", "collect", "đồ rơi", "do roi", "rơi", "roi", "xp", "kinh nghiệm")) {
+            return "Gõ /gf collect là tui hút đồ rơi + xp trong 10 block vào túi bạn liền!";
         }
         if (contains(q, "lệnh", "lenh", "giúp", "giup", "help", "dùng", "dung")) {
-            return "Lệnh nè: /gf spawn, /gf follow, /gf stay, /gf here, /gf goto x y z, /gf dismiss. Chat thì gõ @gf + câu hỏi!";
+            return "Lệnh nè: /gf spawn, /gf follow, /gf stay, /gf here, /gf goto x y z, /gf dismiss, "
+                    + "/gf attack, /gf stop, /gf mine, /gf collect, /gf feed. Chat thì gõ @gf + câu hỏi!";
         }
         if (contains(q, "cảm ơn", "cam on", "thanks", "thank")) {
             return "Không có chi! Được đi phiêu lưu cùng bạn là vui nhất rồi!";
