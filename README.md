@@ -136,7 +136,7 @@ src/main/java/com/khoand/mcgf/
   MinecraftGFMod.java      — entrypoint + tick (teleport/heal) + nap/luu tri nho
   GfBrain.java             — nghe chat @gf, gọi Gemini async, fallback offline, persist
   GfSurvival.java          — attack/stop/mine/collect/feed/tickHeal
-  GfClient.java            — client: đăng ký renderer sói
+  GfClient.java (src/client) — client: đăng ký renderer sói
   GfEntities.java          — EntityType mcgf:companion
   GfCompanionEntity.java   — entity kế thừa WolfEntity (máu 40, tốc 0.35, dmg 4)
   GfCompanionManager.java  — spawn/follow/stay/goto/here/dismiss

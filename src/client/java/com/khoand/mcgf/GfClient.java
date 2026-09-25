@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.WolfEntityRenderer;
 /**
  * Module 2 — Client: dung lai renderer so'i vanilla cho companion
  * (GfCompanionEntity ke thua WolfEntity nen tuong thich).
+ * File nay PHAI nam o src/client (Loom split env), khong duoc o src/main.
  */
 public class GfClient implements ClientModInitializer {
     @Override
