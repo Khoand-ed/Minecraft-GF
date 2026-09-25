@@ -14,8 +14,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.DynamicTexture;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 
 /**
@@ -96,7 +96,7 @@ public final class GfSkins {
             return false;
         }
         MinecraftClient.getInstance().getTextureManager()
-                .registerTexture(CUSTOM, new DynamicTexture(img));
+                .registerTexture(CUSTOM, new NativeImageBackedTexture(img));
         active = CUSTOM;
         return true;
     }
