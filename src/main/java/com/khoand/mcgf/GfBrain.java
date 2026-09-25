@@ -70,7 +70,7 @@ public final class GfBrain {
 
     public static void register() {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
-            String text = message.getContent().plain().trim();
+            String text = message.getContent().getString().trim();
             String prefix = GfConfig.get().chatPrefix;
             if (!text.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT))) {
                 return;
