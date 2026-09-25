@@ -10,7 +10,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 /**
- * Module 2 — Dang ky EntityType "mcgf:companion" cho MC 1.21.1.
+ * Module 2+7 — Dang ky EntityType "mcgf:companion" cho MC 1.21.1.
+ * M7: kich thuoc dang nguoi (0.6 x 1.8), id giu nguyen de pet cu tu chuyen.
  */
 public final class GfEntities {
     public static EntityType<GfCompanionEntity> COMPANION;
@@ -23,7 +24,7 @@ public final class GfEntities {
                 Registries.ENTITY_TYPE,
                 Identifier.of(MinecraftGFMod.MOD_ID, "companion"),
                 FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, GfCompanionEntity::new)
-                        .dimensions(EntityDimensions.fixed(0.6F, 0.85F))
+                        .dimensions(EntityDimensions.fixed(0.6F, 1.8F))
                         .trackRangeBlocks(10)
                         .build());
 

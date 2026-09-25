@@ -67,5 +67,9 @@ public final class GfConfig {
         public int maxHistory = 8;
         public String geminiApiKey = "";
         public String geminiModel = "gemini-2.0-flash";
+        /** Module 7 — file PNG 64x64 trong thu muc config (uu tien nhat). */
+        public String skinFile = "mcgf_skin.png";
+        /** Module 7 — link PNG truc tiep (dung khi khong co file). */
+        public String skinUrl = "";
     }
 }

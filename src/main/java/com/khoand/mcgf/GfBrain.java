@@ -285,7 +285,7 @@ public final class GfBrain {
     }
 
     private static String systemPrompt(String name, String context) {
-        return "Bạn là " + name + ", một chú sói bạn đồng hành trong Minecraft 1.21.1 (mod MCGF). "
+        return "Bạn là " + name + ", một người bạn đồng hành trong Minecraft 1.21.1 (mod MCGF). "
                 + "Tính cách vui vẻ, trung thành, nói tiếng Việt ngắn gọn dưới 200 ký tự, không dùng markdown. "
                 + context + " "
                 + "Các lệnh của bạn: /gf spawn (gọi ra), /gf follow (đi theo), /gf stay (ngồi yên), "
@@ -319,10 +319,10 @@ public final class GfBrain {
         String name = GfConfig.get().companionName;
 
         if (contains(q, "chào", "chao", "hello", "hi ", "hí", "hey")) {
-            return "Chào bạn! Tui là " + name + ", sói đồng hành của bạn đây. Gõ @gf + câu hỏi để trò chuyện nha!";
+            return "Chào bạn! Tui là " + name + ", bạn đồng hành của bạn đây. Gõ @gf + câu hỏi để trò chuyện nha!";
         }
         if (contains(q, "tên", "ten", "bạn là ai", "ban la ai", "là gì", "la gi")) {
-            return "Tui là " + name + ", sói AI trong mod MCGF, biết đi theo, chiến đấu cùng bạn và trả lời câu hỏi!";
+            return "Tui là " + name + ", bạn AI trong mod MCGF, biết đi theo, chiến đấu cùng bạn và trả lời câu hỏi!";
         }
         if (contains(q, "theo", "follow", "đi cùng", "di cung")) {
             return "Muốn tui đi theo thì gõ /gf follow nha. Muốn tui ngồi yên thì /gf stay!";
@@ -331,7 +331,7 @@ public final class GfBrain {
             return "Ok, gõ /gf stay là tui ngồi yên tại chỗ liền!";
         }
         if (contains(q, "đánh", "danh", "quái", "quai", "creeper", "zombie", "skeleton", "nhện", "nhen", "chiến", "attack")) {
-            return "Gõ /gf attack là tui lao vào cắn quái gần nhất! Đánh xong gõ /gf stop để tui quay về. Tui cũng tự cắn đứa nào dám đánh bạn đó!";
+            return "Gõ /gf attack là tui lao vào đánh quái gần nhất! Đánh xong gõ /gf stop để tui quay về. Tui cũng tự đánh đứa nào dám đụng bạn đó!";
         }
         if (contains(q, "đào", "dao", "mine", "cuốc", "cuoc", "kim cương", "kim cuong", "sắt", "sat", "quặng", "quang", "vỉa", "via")) {
             return "Nhìn vào block rồi /gf mine để tui đào giúp! Muốn đào CẢ VỈA quặng thì /gf minevein — đồ tui giữ trong kho, xong gõ /gf give để lấy!";

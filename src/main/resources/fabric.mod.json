@@ -18,6 +18,6 @@
     "java": ">=21"
   },
   "custom": {
-    "mcgf:modules": ["m1-core", "m2-follow", "m3-chat", "m4-survival", "m5-polish", "m6-autoskills"]
+    "mcgf:modules": ["m1-core", "m2-follow", "m3-chat", "m4-survival", "m5-polish", "m6-autoskills", "m7-humanoid"]
   }
 }

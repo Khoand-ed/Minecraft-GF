@@ -97,7 +97,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.1.0 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.2.0 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -357,7 +357,10 @@ public final class GfCommands {
                                             + "§7- AI: §e" + (c.aiEnabled ? "on" : "off") + " " + key + "\n"
                                             + "§7- Tri nho: §e" + c.maxHistory + " cap hoi-dap\n"
                                             + "§7- Follow/teleport: §e" + c.followDistance + "/"
-                                            + c.teleportDistance + " block"),
+                                            + c.teleportDistance + " block\n"
+                                            + "§7- Skin: §e" + c.skinFile
+                                            + ((c.skinUrl == null || c.skinUrl.isBlank())
+                                                    ? " (hoac mac dinh)" : " / URL da nap")),
                                     false);
                             return 1;
                         }))
