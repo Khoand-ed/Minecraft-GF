@@ -15,13 +15,16 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 /**
@@ -44,7 +47,7 @@ public class GfCompanionEntity extends TameableEntity {
         this.goalSelector.add(1, new SwimGoal(this));
         this.goalSelector.add(2, new SitGoal(this));
         this.goalSelector.add(4, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.add(5, new FollowOwnerGoal(this, 1.0, 6.0F, 2.0F, false));
+        this.goalSelector.add(5, new FollowOwnerGoal(this, 1.0, 6.0F, 2.0F));
         this.goalSelector.add(7, new WanderAroundFarGoal(this, 0.8));
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.targetSelector.add(1, new TrackOwnerAttackerGoal(this));
@@ -72,6 +75,17 @@ public class GfCompanionEntity extends TameableEntity {
         return !this.isSitting();
     }
 
+    /** Khong nhan giong (can thiep breed thi tra ve null). */
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+        return null;
+    }
+
     public Inventory getBag() {
         return this.bag;
     }
@@ -89,7 +103,7 @@ public class GfCompanionEntity extends TameableEntity {
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         NbtCompound bagNbt = new NbtCompound();
-        Inventories.writeNbt(bagNbt, this.bag.getHeldStacks());
+        Inventories.writeNbt(bagNbt, this.bag.getHeldStacks(), this.getWorld().getRegistryManager());
         nbt.put("MCGFBag", bagNbt);
     }
 
@@ -98,7 +112,8 @@ public class GfCompanionEntity extends TameableEntity {
         super.readCustomDataFromNbt(nbt);
         this.bag.clear();
         if (nbt.contains("MCGFBag", NbtElement.COMPOUND_TYPE)) {
-            Inventories.readNbt(nbt.getCompound("MCGFBag"), this.bag.getHeldStacks());
+            Inventories.readNbt(nbt.getCompound("MCGFBag"), this.bag.getHeldStacks(),
+                    this.getWorld().getRegistryManager());
         }
     }
 }

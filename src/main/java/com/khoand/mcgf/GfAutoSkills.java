@@ -22,6 +22,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -250,8 +251,7 @@ public final class GfAutoSkills {
         return s.isIn(BlockTags.COAL_ORES) || s.isIn(BlockTags.IRON_ORES)
                 || s.isIn(BlockTags.COPPER_ORES) || s.isIn(BlockTags.GOLD_ORES)
                 || s.isIn(BlockTags.REDSTONE_ORES) || s.isIn(BlockTags.LAPIS_ORES)
-                || s.isIn(BlockTags.DIAMOND_ORES) || s.isIn(BlockTags.EMERALD_ORES)
-                || s.isIn(BlockTags.NETHER_GOLD_ORES);
+                || s.isIn(BlockTags.DIAMOND_ORES) || s.isIn(BlockTags.EMERALD_ORES);
     }
 
     private static BlockPos nearestMatching(ServerWorld world, BlockPos center, int r, Matcher m) {
