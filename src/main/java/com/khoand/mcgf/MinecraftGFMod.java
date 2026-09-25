@@ -29,6 +29,8 @@ public class MinecraftGFMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> GfBrain.loadHistory());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> GfBrain.saveHistory());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            // Viec tu dong (minevein/chop/farm) chay moi tick.
+            GfAutoSkills.tick(server);
             // Moi 20 tick (~1 giay) keo companion bi lac ve gan chu.
             if (++tickCounter >= 20) {
                 tickCounter = 0;

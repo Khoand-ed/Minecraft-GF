@@ -291,7 +291,9 @@ public final class GfBrain {
                 + "Các lệnh của bạn: /gf spawn (gọi ra), /gf follow (đi theo), /gf stay (ngồi yên), "
                 + "/gf here (kéo về), /gf goto x y z (đến tọa độ), /gf dismiss (cho về), "
                 + "/gf attack (đánh quái gần nhất), /gf stop (dừng đánh), "
-                + "/gf mine (đào block đang nhìn), /gf collect (nhặt đồ rơi), /gf feed (cho ăn thịt). "
+                + "/gf mine (đào block đang nhìn), /gf collect (nhặt đồ rơi), /gf feed (cho ăn thịt), "
+                + "/gf minevein (đào cả vỉa quặng), /gf chop (đốn cây), /gf farm (thu lúa + trồng lại), "
+                + "/gf bag (xem kho pet), /gf give (lấy đồ từ kho pet), /gf deposit (cất vào rương gần nhất). "
                 + "Khi được hỏi cách chơi, hướng dẫn ngắn gọn đúng các lệnh này.";
     }
 
@@ -331,18 +333,23 @@ public final class GfBrain {
         if (contains(q, "đánh", "danh", "quái", "quai", "creeper", "zombie", "skeleton", "nhện", "nhen", "chiến", "attack")) {
             return "Gõ /gf attack là tui lao vào cắn quái gần nhất! Đánh xong gõ /gf stop để tui quay về. Tui cũng tự cắn đứa nào dám đánh bạn đó!";
         }
-        if (contains(q, "đào", "dao", "mine", "cuốc", "cuoc", "kim cương", "kim cuong", "sắt", "sat")) {
-            return "Nhìn vào block cần đào (trong 6 block) rồi gõ /gf mine, tui đào giúp! Nhớ gọi /gf here cho tui lại gần trước nha!";
+        if (contains(q, "đào", "dao", "mine", "cuốc", "cuoc", "kim cương", "kim cuong", "sắt", "sat", "quặng", "quang", "vỉa", "via")) {
+            return "Nhìn vào block rồi /gf mine để tui đào giúp! Muốn đào CẢ VỈA quặng thì /gf minevein — đồ tui giữ trong kho, xong gõ /gf give để lấy!";
         }
         if (contains(q, "ăn", "an", "feed", "máu", "mau", "hồi", "hoi", "đói", "doi", "thịt", "thit")) {
             return "Bỏ thịt vào túi bạn rồi gõ /gf feed là tui ăn và hồi máu! Ngoài giao tranh tui cũng tự hồi máu từ từ.";
         }
         if (contains(q, "nhặt", "nhat", "collect", "đồ rơi", "do roi", "rơi", "roi", "xp", "kinh nghiệm")) {
-            return "Gõ /gf collect là tui hút đồ rơi + xp trong 10 block vào túi bạn liền!";
+            return "Gõ /gf collect là tui hút đồ rơi + xp trong 10 block vào túi bạn liền! Đồ tui đào/farm thì nằm trong kho tui — gõ /gf bag để xem, /gf give để lấy!";
+        }
+        if (contains(q, "kho", "túi pet", "tui pet", "give", "deposit", "rương", "ruong", "cất", "cat", "chặt", "chat cay", "đốn", "don", "farm", "trồng", "trong lua", "lúa")) {
+            return "Tui có kho riêng 9 ô nè! /gf minevein đào quặng, /gf chop đốn cây, /gf farm thu lúa (tự trồng lại), /gf bag xem kho, /gf give lấy đồ, /gf deposit cất vào rương gần nhất!";
         }
         if (contains(q, "lệnh", "lenh", "giúp", "giup", "help", "dùng", "dung")) {
             return "Lệnh nè: /gf spawn, /gf follow, /gf stay, /gf here, /gf goto x y z, /gf dismiss, "
-                    + "/gf attack, /gf stop, /gf mine, /gf collect, /gf feed. Chat thì gõ @gf + câu hỏi!";
+                    + "/gf attack, /gf stop, /gf mine, /gf collect, /gf feed, "
+                    + "/gf minevein, /gf chop, /gf farm, /gf bag, /gf give, /gf deposit. "
+                    + "Chat thì gõ @gf + câu hỏi!";
         }
         if (contains(q, "cảm ơn", "cam on", "thanks", "thank")) {
             return "Không có chi! Được đi phiêu lưu cùng bạn là vui nhất rồi!";

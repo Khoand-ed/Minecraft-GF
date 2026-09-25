@@ -12,6 +12,7 @@ import net.minecraft.text.Text;
  * Module 3 — Lenh AI: ask, ai on/off, forget, apikey.
  * Module 4 — Lenh sinh ton: attack, stop, mine, collect, feed.
  * Module 5 — Lenh config: config, prefix.
+ * Module 6 — Viec tu dong: minevein, chop, farm, bag, give, deposit.
  *
  * <pre>
  * /gf help              — xem tro giup
@@ -35,6 +36,12 @@ import net.minecraft.text.Text;
  * /gf mine              — dao block dang nhin (M4)
  * /gf collect           — nhat do roi quanh ban (M4)
  * /gf feed              — cho an thit tu tui ban (M4)
+ * /gf minevein          — dao ca via quang gan nhat (M6, do vao kho pet)
+ * /gf chop              — don ca cay gan nhat (M6)
+ * /gf farm              — thu lua chin + trong lai (M6)
+ * /gf bag               — xem kho pet (M6)
+ * /gf give              — lay do tu kho pet (M6)
+ * /gf deposit           — cat kho pet vao ruong gan nhat (M6)
  * /gf config            — xem cau hinh (M5)
  * /gf prefix &lt;p&gt;        — doi prefix chat (M5, can OP)
  * </pre>
@@ -73,6 +80,8 @@ public final class GfCommands {
                                             + "§e/gf mine§r — dao block dang nhin\n"
                                             + "§e/gf collect§r — nhat do roi\n"
                                             + "§e/gf feed§r — cho an\n"
+                                            + "§e/gf minevein|chop|farm§r — viec tu dong\n"
+                                            + "§e/gf bag|give|deposit§r — kho pet\n"
                                             + "§e/gf config§r — xem cau hinh\n"
                                             + "§e/gf prefix <p>§r — doi prefix chat (OP)"),
                                     false);
@@ -88,7 +97,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.0.0 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.1.0 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -192,7 +201,15 @@ public final class GfCommands {
                                 ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
                                 return 0;
                             }
-                            return GfSurvival.stop(player);
+                            boolean hadJob = GfAutoSkills.cancel(player);
+                            int r = GfSurvival.stop(player);
+                            if (hadJob) {
+                                ctx.getSource().sendFeedback(
+                                        () -> Text.literal("§b[MCGF]§r Đã hủy việc đang làm!"),
+                                        false);
+                                return 1;
+                            }
+                            return r;
                         }))
                         .then(CommandManager.literal("mine").executes(ctx -> {
                             ServerPlayerEntity player = ctx.getSource().getPlayer();
@@ -217,6 +234,55 @@ public final class GfCommands {
                                 return 0;
                             }
                             return GfSurvival.feed(player);
+                        }))
+                        // ---- Module 6: viec tu dong + kho rieng ----
+                        .then(CommandManager.literal("minevein").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.startMinevein(player);
+                        }))
+                        .then(CommandManager.literal("chop").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.startChop(player);
+                        }))
+                        .then(CommandManager.literal("farm").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.startFarm(player);
+                        }))
+                        .then(CommandManager.literal("give").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.give(player);
+                        }))
+                        .then(CommandManager.literal("deposit").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.deposit(player);
+                        }))
+                        .then(CommandManager.literal("bag").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfAutoSkills.showBag(player);
                         }))
                         // ---- Module 3: AI ----
                         .then(CommandManager.literal("ask")
