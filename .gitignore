@@ -20,6 +20,7 @@ remappedJars/
 .DS_Store
 Thumbs.db
 
-# Secrets — KHONG commit key AI
+# Secrets + du lieu local — KHONG commit key AI / tri nho chat
 config/mcgf.json
+config/mcgf_history.json
 .env

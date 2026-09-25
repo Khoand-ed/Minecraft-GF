@@ -1,11 +1,15 @@
 package com.khoand.mcgf;
 
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -17,23 +21,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 /**
- * Module 3 — Chat AI.
+ * Module 3 — Chat AI. Module 5 — Persist tri nho.
  * Nghe chat server: tin nhan bat dau bang prefix (mac dinh "@gf")
  * se duoc tra loi. Co API key thi goi Gemini (async, khong lag server),
  * chua co key hoac loi mang thi tra loi offline tieng Viet.
+ * Tri nho hoi-dap duoc luu xuong config/mcgf_history.json khi tat server
+ * va nap lai khi mo server.
  */
 public final class GfBrain {
     private static final Gson GSON = new Gson();
+    private static final Gson PRETTY = new GsonBuilder().setPrettyPrinting().create();
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -141,6 +151,76 @@ public final class GfBrain {
             while (q.size() > cap) {
                 q.pollFirst();
             }
+        }
+    }
+
+    // ---------- Module 5: persist tri nho ----------
+
+    private static Path historyFile() {
+        return FabricLoader.getInstance().getConfigDir().resolve("mcgf_history.json");
+    }
+
+    /** Nap tri nho tu lan chay truoc (goi khi server started). */
+    public static void loadHistory() {
+        Path file = historyFile();
+        if (!Files.exists(file)) {
+            return;
+        }
+        try (Reader r = Files.newBufferedReader(file)) {
+            JsonObject root = JsonParser.parseReader(r).getAsJsonObject();
+            int count = 0;
+            for (Map.Entry<String, JsonElement> e : root.entrySet()) {
+                UUID owner;
+                try {
+                    owner = UUID.fromString(e.getKey());
+                } catch (IllegalArgumentException bad) {
+                    continue;
+                }
+                Deque<Msg> q = new ArrayDeque<>();
+                for (JsonElement je : e.getValue().getAsJsonArray()) {
+                    JsonObject o = je.getAsJsonObject();
+                    String role = o.has("role") ? o.get("role").getAsString() : "user";
+                    String text = o.has("text") ? o.get("text").getAsString() : "";
+                    if (role.equals("user") || role.equals("model")) {
+                        q.addLast(new Msg(role, text));
+                    }
+                }
+                if (!q.isEmpty()) {
+                    HISTORY.put(owner, q);
+                    count++;
+                }
+                if (count >= 20) {
+                    break;
+                }
+            }
+            MinecraftGFMod.LOGGER.info("[MCGF] Da nap tri nho AI cua {} player", count);
+        } catch (Exception ex) {
+            MinecraftGFMod.LOGGER.warn("[MCGF] Khong nap duoc tri nho AI: {}", ex.toString());
+        }
+    }
+
+    /** Luu tri nho xuong dia (goi khi server stopping). */
+    public static void saveHistory() {
+        try {
+            JsonObject root = new JsonObject();
+            for (Map.Entry<UUID, Deque<Msg>> e : HISTORY.entrySet()) {
+                JsonArray arr = new JsonArray();
+                synchronized (e.getValue()) {
+                    for (Msg m : e.getValue()) {
+                        JsonObject o = new JsonObject();
+                        o.addProperty("role", m.role);
+                        o.addProperty("text", m.text);
+                        arr.add(o);
+                    }
+                }
+                root.add(e.getKey().toString(), arr);
+            }
+            try (Writer w = Files.newBufferedWriter(historyFile())) {
+                PRETTY.toJson(root, w);
+            }
+            MinecraftGFMod.LOGGER.info("[MCGF] Da luu tri nho AI ({} player)", HISTORY.size());
+        } catch (Exception ex) {
+            MinecraftGFMod.LOGGER.warn("[MCGF] Khong luu duoc tri nho AI: {}", ex.toString());
         }
     }
 

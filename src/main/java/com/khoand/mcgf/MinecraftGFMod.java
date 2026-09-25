@@ -1,6 +1,7 @@
 package com.khoand.mcgf;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,14 @@ public class MinecraftGFMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("[MCGF] Module 1+2+3+4 init: Minecraft 1.21.1 AI Companion");
+        LOGGER.info("[MCGF] v1.0.0 init: Minecraft 1.21.1 AI Companion (M1-M5)");
         GfConfig.load();
         GfEntities.register();
         GfCommands.register();
         GfBrain.register();
+        // Module 5: nap/luu tri nho AI khi mo/tat server.
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> GfBrain.loadHistory());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> GfBrain.saveHistory());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             // Moi 20 tick (~1 giay) keo companion bi lac ve gan chu.
             if (++tickCounter >= 20) {

@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
  * Module 1 — Lenh /gf co ban. Module 2 — Lenh companion follow.
  * Module 3 — Lenh AI: ask, ai on/off, forget, apikey.
  * Module 4 — Lenh sinh ton: attack, stop, mine, collect, feed.
+ * Module 5 — Lenh config: config, prefix.
  *
  * <pre>
  * /gf help              — xem tro giup
@@ -34,6 +35,8 @@ import net.minecraft.text.Text;
  * /gf mine              — dao block dang nhin (M4)
  * /gf collect           — nhat do roi quanh ban (M4)
  * /gf feed              — cho an thit tu tui ban (M4)
+ * /gf config            — xem cau hinh (M5)
+ * /gf prefix &lt;p&gt;        — doi prefix chat (M5, can OP)
  * </pre>
  */
 public final class GfCommands {
@@ -69,7 +72,9 @@ public final class GfCommands {
                                             + "§e/gf stop§r — dung danh\n"
                                             + "§e/gf mine§r — dao block dang nhin\n"
                                             + "§e/gf collect§r — nhat do roi\n"
-                                            + "§e/gf feed§r — cho an"),
+                                            + "§e/gf feed§r — cho an\n"
+                                            + "§e/gf config§r — xem cau hinh\n"
+                                            + "§e/gf prefix <p>§r — doi prefix chat (OP)"),
                                     false);
                             return 1;
                         }))
@@ -83,7 +88,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 0.4.0-m4 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.0.0 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -270,6 +275,39 @@ public final class GfCommands {
                                     ctx.getSource().sendFeedback(
                                             () -> Text.literal("§b[MCGF]§r Da luu key Gemini (" + masked
                                                     + "). Chat " + GfConfig.get().chatPrefix + " <cau hoi> de thu!"),
+                                            false);
+                                    return 1;
+                                })))
+                        // ---- Module 5: config in-game ----
+                        .then(CommandManager.literal("config").executes(ctx -> {
+                            GfConfig.Data c = GfConfig.get();
+                            String key = (c.geminiApiKey == null || c.geminiApiKey.isBlank())
+                                    ? "(chua nap)"
+                                    : "(da nap, model " + c.geminiModel + ")";
+                            ctx.getSource().sendFeedback(() -> Text.literal(
+                                    "§b[MCGF] Cau hinh:\n"
+                                            + "§7- Ten: §e" + c.companionName + "\n"
+                                            + "§7- Prefix chat: §e" + c.chatPrefix + "\n"
+                                            + "§7- AI: §e" + (c.aiEnabled ? "on" : "off") + " " + key + "\n"
+                                            + "§7- Tri nho: §e" + c.maxHistory + " cap hoi-dap\n"
+                                            + "§7- Follow/teleport: §e" + c.followDistance + "/"
+                                            + c.teleportDistance + " block"),
+                                    false);
+                            return 1;
+                        }))
+                        .then(CommandManager.literal("prefix")
+                                .requires(src -> src.hasPermissionLevel(2))
+                                .then(CommandManager.argument("p", StringArgumentType.word()).executes(ctx -> {
+                                    String p = StringArgumentType.getString(ctx, "p");
+                                    if (p.isBlank() || p.length() > 8) {
+                                        ctx.getSource().sendError(Text.literal("Prefix 1-8 ky tu, vd: /gf prefix @gf"));
+                                        return 0;
+                                    }
+                                    GfConfig.get().chatPrefix = p;
+                                    GfConfig.save();
+                                    ctx.getSource().sendFeedback(
+                                            () -> Text.literal("§b[MCGF]§r Prefix chat moi: " + p
+                                                    + " (vd: " + p + " xin chao)"),
                                             false);
                                     return 1;
                                 })))

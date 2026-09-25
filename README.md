@@ -10,8 +10,8 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - [x] **M1 — Core:** scaffold Fabric 1.21.1, config `config/mcgf.json`, lệnh `/gf help|hello|version|name|say`
 - [x] **M2 — Follow:** companion sói đi theo, `/gf spawn|follow|stay|here|goto|dismiss`, tự teleport khi lạc
 - [x] **M3 — Chat AI:** chat `@gf <câu hỏi>`, Gemini online + fallback offline, `/gf ask|ai|forget|apikey`
-- [x] **M4 — Sinh tồn (hiện tại):** `/gf attack|stop|mine|collect|feed`, tự hồi máu ngoài giao tranh
-- [ ] **M5 — Polish:** GUI config, persist, build release `.jar`
+- [x] **M4 — Sinh tồn:** `/gf attack|stop|mine|collect|feed`, tự hồi máu ngoài giao tranh
+- [x] **M5 — Polish (hiện tại):** lưu trí nhớ AI, `/gf config|prefix`, CI build ra `.jar`
 
 **Quy tắc:** xong 1 module → bạn test → OK mới làm module tiếp. Chưa push khi bạn chưa duyệt.
 
@@ -22,12 +22,19 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - JDK **21** (`java -version` phải ra 21)
 - Gradle 8.10.2 (dùng `./gradlew` kèm theo, lần đầu cần mạng để tải MC + mappings)
 
-## Chạy thử Module 4
+## Chạy thử / lấy file mod (v1.0.0)
+
+Cách 1 — CI tự build (khuyên dùng, không cần cài Gradle):
+1. Vào tab **Actions** của repo → workflow **Build mod** → lần chạy mới nhất.
+2. Tải artifact **mcgf-jar** → được `mcgf-ai-companion-1.0.0.jar`.
+3. Copy vào `.minecraft/mods/` (profile Fabric 1.21.1 + Fabric API).
+
+Cách 2 — build local:
 
 ```powershell
 cd D:\MCGF
 .\gradlew.bat build
-# build/libs/mcgf-ai-companion-0.4.0-m4.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
+# build/libs/mcgf-ai-companion-1.0.0.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
 ```
 
 ## Sinh tồn cùng companion (Module 4, cần `/gf spawn` trước)
@@ -106,22 +113,35 @@ Kết quả đúng:
 ```
 /gf hello
 /gf say xin chào mọi người
+/gf version    # phải ra 1.0.0
 ```
 
-## Cấu trúc Module 4
+## Config trong game (Module 5)
+
+```
+/gf config       # xem toàn bộ cấu hình (key che ****)
+/gf prefix @bot  # đổi prefix chat (cần OP), chat "@bot xin chào" để thử
+```
+
+Trí nhớ AI tự lưu vào `config/mcgf_history.json` khi tắt server
+và nạp lại khi mở — cả 2 file config đều đã gitignore.
+Pet sói là entity thật nên tự lưu theo world, relog không mất.
+
+## Cấu trúc v1.0.0
 
 ```
 settings.gradle / build.gradle / gradle.properties
+.github/workflows/build.yml   — CI: build + up artifact .jar mỗi push main
 src/main/java/com/khoand/mcgf/
-  MinecraftGFMod.java      — entrypoint + server tick (auto-teleport + auto-heal)
-  GfBrain.java             — nghe chat @gf, gọi Gemini async, fallback offline
+  MinecraftGFMod.java      — entrypoint + tick (teleport/heal) + nap/luu tri nho
+  GfBrain.java             — nghe chat @gf, gọi Gemini async, fallback offline, persist
   GfSurvival.java          — attack/stop/mine/collect/feed/tickHeal
   GfClient.java            — client: đăng ký renderer sói
   GfEntities.java          — EntityType mcgf:companion
   GfCompanionEntity.java   — entity kế thừa WolfEntity (máu 40, tốc 0.35, dmg 4)
   GfCompanionManager.java  — spawn/follow/stay/goto/here/dismiss
-  GfConfig.java            — config json (+ aiEnabled, maxHistory, geminiApiKey)
-  GfCommands.java          — /gf (M1-M4)
+  GfConfig.java            — config json
+  GfCommands.java          — /gf (full M1-M5)
 src/main/resources/fabric.mod.json
 ```
 
@@ -138,8 +158,15 @@ src/main/resources/fabric.mod.json
   Key chỉ nằm ở `config/mcgf.json` local (đã gitignore).
 - Sinh tồn tôn trọng luật survival: đào bằng `tryBreakBlock` (rớt đồ/mòn tool thật),
   ăn thịt thật từ túi chủ, nhặt đồ bằng `insertStack` vào túi chủ.
+- CI (`.github/workflows/build.yml`): mỗi push lên `main` tự build bằng Gradle 8.10.2 + JDK 21
+  và đăng `.jar` ở Artifacts — vừa là release vừa kiểm tra compile.
 
-## Bước tiếp theo (M5, chưa làm)
+## Checklist test full v1.0.0
 
-Polish: màn hình config trong game (Mod Menu), lưu trí nhớ AI,
-build release `.jar` đăng GitHub Releases.
+```
+/gf version   → 1.0.0
+/gf config    → hiện cấu hình
+/gf spawn → /gf follow → /gf attack → /gf stop → /gf mine → /gf collect → /gf feed
+@gf xin chào (offline) → /gf apikey <key> → @gf creeper là gì? (online)
+Tắt/mở server → AI vẫn nhớ hội thoại cũ (/gf forget để xóa)
+```
