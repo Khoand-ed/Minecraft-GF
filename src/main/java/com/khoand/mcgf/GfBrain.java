@@ -293,7 +293,8 @@ public final class GfBrain {
                 + "/gf attack (đánh quái gần nhất), /gf stop (dừng đánh), "
                 + "/gf mine (đào block đang nhìn), /gf collect (nhặt đồ rơi), /gf feed (cho ăn thịt), "
                 + "/gf minevein (đào cả vỉa quặng), /gf chop (đốn cây), /gf farm (thu lúa + trồng lại), "
-                + "/gf bag (xem kho pet), /gf give (lấy đồ từ kho pet), /gf deposit (cất vào rương gần nhất). "
+                + "/gf bag (xem kho pet), /gf give (lấy đồ từ kho pet), /gf deposit (cất vào rương gần nhất), "
+                + "/gf equip (mặc vũ khí/giáp tốt nhất, dame và giáp tính thật), /gf unequip (cởi đồ), /gf gear (xem đồ). "
                 + "Khi được hỏi cách chơi, hướng dẫn ngắn gọn đúng các lệnh này.";
     }
 
@@ -339,6 +340,9 @@ public final class GfBrain {
         if (contains(q, "ăn", "an", "feed", "máu", "mau", "hồi", "hoi", "đói", "doi", "thịt", "thit")) {
             return "Bỏ thịt vào túi bạn rồi gõ /gf feed là tui ăn và hồi máu! Ngoài giao tranh tui cũng tự hồi máu từ từ.";
         }
+        if (contains(q, "giáp", "giap", "armor", "vũ khí", "vu khi", "weapon", "kiem", "kiếm", "sword", "trang bị", "trang bi", "equip", "gear", "mặc", "mac")) {
+            return "Cho tui vũ khí/giáp vào kho tui (hoặc túi bạn) rồi gõ /gf equip — tui tự mặc đồ xịn nhất, dame và giáp tính thật! /gf gear để xem, /gf unequip để cởi!";
+        }
         if (contains(q, "nhặt", "nhat", "collect", "đồ rơi", "do roi", "rơi", "roi", "xp", "kinh nghiệm")) {
             return "Gõ /gf collect là tui hút đồ rơi + xp trong 10 block vào túi bạn liền! Đồ tui đào/farm thì nằm trong kho tui — gõ /gf bag để xem, /gf give để lấy!";
         }
@@ -348,7 +352,8 @@ public final class GfBrain {
         if (contains(q, "lệnh", "lenh", "giúp", "giup", "help", "dùng", "dung")) {
             return "Lệnh nè: /gf spawn, /gf follow, /gf stay, /gf here, /gf goto x y z, /gf dismiss, "
                     + "/gf attack, /gf stop, /gf mine, /gf collect, /gf feed, "
-                    + "/gf minevein, /gf chop, /gf farm, /gf bag, /gf give, /gf deposit. "
+                    + "/gf minevein, /gf chop, /gf farm, /gf bag, /gf give, /gf deposit, "
+                    + "/gf equip, /gf unequip, /gf gear. "
                     + "Chat thì gõ @gf + câu hỏi!";
         }
         if (contains(q, "cảm ơn", "cam on", "thanks", "thank")) {

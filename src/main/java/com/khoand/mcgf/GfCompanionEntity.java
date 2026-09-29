@@ -11,6 +11,7 @@ import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.HostileEntity;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 /**
@@ -37,6 +39,11 @@ import net.minecraft.world.World;
 public class GfCompanionEntity extends TameableEntity {
     /** Kho rieng 9 o: /gf bag xem, /gf give lay, /gf deposit cat ruong. */
     private final SimpleInventory bag = new SimpleInventory(9);
+    /**
+     * Module 8a — Trang bi: 0 tay chinh, 1 mu, 2 ao, 3 quan, 4 giay.
+     * Giap tinh that qua getEquippedStack, dame tay tinh qua attribute.
+     */
+    private final DefaultedList<ItemStack> gear = DefaultedList.ofSize(5, ItemStack.EMPTY);
 
     public GfCompanionEntity(EntityType<? extends TameableEntity> type, World world) {
         super(type, world);
@@ -90,6 +97,38 @@ public class GfCompanionEntity extends TameableEntity {
         return this.bag;
     }
 
+    /** Trang bi mac tren nguoi (0 tay, 1 mu, 2 ao, 3 quan, 4 giay). */
+    public DefaultedList<ItemStack> getGear() {
+        return this.gear;
+    }
+
+    /** Ghi de de giap tinh that tu do dang mac (LivingEntity.getArmor tu goi ham nay). */
+    @Override
+    public ItemStack getEquippedStack(EquipmentSlot slot) {
+        switch (slot) {
+            case MAINHAND:
+                return this.gear.get(0);
+            case HEAD:
+                return this.gear.get(1);
+            case CHEST:
+                return this.gear.get(2);
+            case LEGS:
+                return this.gear.get(3);
+            case FEET:
+                return this.gear.get(4);
+            default:
+                return ItemStack.EMPTY;
+        }
+    }
+
+    /** Cap nhat dame danh theo vu khi dang cam (tay khong = 4). */
+    public void refreshAttackDamage() {
+        var attr = this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+        if (attr != null) {
+            attr.setBaseValue(Math.max(4.0, GfGear.weaponDamage(this.gear.get(0).getItem())));
+        }
+    }
+
     /** Tong so item trong kho (dem theo vien). */
     public int bagItemCount() {
         int n = 0;
@@ -105,6 +144,9 @@ public class GfCompanionEntity extends TameableEntity {
         NbtCompound bagNbt = new NbtCompound();
         Inventories.writeNbt(bagNbt, this.bag.getHeldStacks(), this.getWorld().getRegistryManager());
         nbt.put("MCGFBag", bagNbt);
+        NbtCompound gearNbt = new NbtCompound();
+        Inventories.writeNbt(gearNbt, this.gear, this.getWorld().getRegistryManager());
+        nbt.put("MCGFGear", gearNbt);
     }
 
     @Override
@@ -115,5 +157,13 @@ public class GfCompanionEntity extends TameableEntity {
             Inventories.readNbt(nbt.getCompound("MCGFBag"), this.bag.getHeldStacks(),
                     this.getWorld().getRegistryManager());
         }
+        for (int i = 0; i < this.gear.size(); i++) {
+            this.gear.set(i, ItemStack.EMPTY);
+        }
+        if (nbt.contains("MCGFGear", NbtElement.COMPOUND_TYPE)) {
+            Inventories.readNbt(nbt.getCompound("MCGFGear"), this.gear,
+                    this.getWorld().getRegistryManager());
+        }
+        this.refreshAttackDamage();
     }
 }

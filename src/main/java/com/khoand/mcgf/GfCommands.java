@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
  * Module 4 — Lenh sinh ton: attack, stop, mine, collect, feed.
  * Module 5 — Lenh config: config, prefix.
  * Module 6 — Viec tu dong: minevein, chop, farm, bag, give, deposit.
+ * Module 8a — Trang bi: equip, unequip, gear.
  *
  * <pre>
  * /gf help              — xem tro giup
@@ -42,6 +43,9 @@ import net.minecraft.text.Text;
  * /gf bag               — xem kho pet (M6)
  * /gf give              — lay do tu kho pet (M6)
  * /gf deposit           — cat kho pet vao ruong gan nhat (M6)
+ * /gf equip             — mac vu khi/giap tot nhat (M8a, dame/giap that)
+ * /gf unequip           — coi do tra ban (M8a)
+ * /gf gear              — xem do dang mac (M8a)
  * /gf config            — xem cau hinh (M5)
  * /gf prefix &lt;p&gt;        — doi prefix chat (M5, can OP)
  * </pre>
@@ -82,6 +86,7 @@ public final class GfCommands {
                                             + "§e/gf feed§r — cho an\n"
                                             + "§e/gf minevein|chop|farm§r — viec tu dong\n"
                                             + "§e/gf bag|give|deposit§r — kho pet\n"
+                                            + "§e/gf equip|unequip|gear§r — trang bi\n"
                                             + "§e/gf config§r — xem cau hinh\n"
                                             + "§e/gf prefix <p>§r — doi prefix chat (OP)"),
                                     false);
@@ -97,7 +102,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.2.0 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.3.0 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -283,6 +288,31 @@ public final class GfCommands {
                                 return 0;
                             }
                             return GfAutoSkills.showBag(player);
+                        }))
+                        // ---- Module 8a: trang bi ----
+                        .then(CommandManager.literal("equip").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfGear.equipBest(player);
+                        }))
+                        .then(CommandManager.literal("unequip").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfGear.unequipAll(player);
+                        }))
+                        .then(CommandManager.literal("gear").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfGear.showGear(player);
                         }))
                         // ---- Module 3: AI ----
                         .then(CommandManager.literal("ask")
