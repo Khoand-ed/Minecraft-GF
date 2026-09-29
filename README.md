@@ -14,8 +14,8 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - [x] **M5 — Polish:** lưu trí nhớ AI, `/gf config|prefix`, CI build ra `.jar`
 - [x] **M6 — Việc tự động:** `/gf minevein|chop|farm`, kho pet riêng + `/gf bag|give|deposit`
 - [x] **M7 — Dáng người:** companion như player, skin custom (file/URL) + skin mặc định
-- [x] **M8a — Trang bị (hiện tại):** `/gf equip|unequip|gear`, dame/giáp tính thật, lưu NBT
-- [ ] **M8b — Hiện đồ:** vũ khí trên tay + giáp trên người (renderer)
+- [x] **M8a — Trang bị:** `/gf equip|unequip|gear`, dame/giáp tính thật, lưu NBT
+- [x] **M8b — Hiện đồ (hiện tại):** vũ khí trên tay + giáp trên người (renderer)
 
 **Quy tắc:** xong 1 module → bạn test → OK mới làm module tiếp. Chưa push khi bạn chưa duyệt.
 
@@ -26,11 +26,11 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 - JDK **21** (`java -version` phải ra 21)
 - Gradle 8.10.2 (dùng `./gradlew` kèm theo, lần đầu cần mạng để tải MC + mappings)
 
-## Chạy thử / lấy file mod (v1.3.0)
+## Chạy thử / lấy file mod (v1.4.0)
 
 Cách 1 — tải bản release (khuyên dùng):
 1. Vào https://github.com/Khoand-ed/Minecraft-GF/releases → bản mới nhất.
-2. Tải `mcgf-ai-companion-1.3.0.jar` ở Assets.
+2. Tải `mcgf-ai-companion-1.4.0.jar` ở Assets.
 3. Copy vào `.minecraft/mods/` (profile Fabric 1.21.1 + Fabric API).
 
 Cách 2 — build local:
@@ -38,7 +38,7 @@ Cách 2 — build local:
 ```powershell
 cd D:\MCGF
 .\gradlew.bat build
-# build/libs/mcgf-ai-companion-1.3.0.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
+# build/libs/mcgf-ai-companion-1.4.0.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
 ```
 
 ## Trang bị cho companion (Module 8a)
@@ -55,7 +55,13 @@ Kết quả đúng:
 - Đánh quái (`/gf attack`) quái mất máu nhiều hơn rõ rệt khi có kiếm.
 - Mặc giáp sắt full → quái đánh đỡ đau hẳn (giáp tính thật qua hệ damage vanilla).
 - Tắt/mở server: đồ đang mặc còn nguyên (lưu NBT `MCGFGear`).
-- M8a chưa hiện đồ trên người (chỉ số vẫn tính) — M8b mới vẽ.
+- M8b vẽ đồ lên người: kiếm cầm tay phải, giáp hiện đúng từng phần.
+
+## Hiện đồ trên người (Module 8b)
+
+Không thêm lệnh mới — `/gf equip` xong nhìn pet là thấy:
+- Vũ khí cầm ở tay phải (kể cả cuốc/rìu — tư thế cầm item).
+- Giáp hiện đúng mũ/áo/quần/giày, màu theo chất liệu (da nhuộm? hiện màu gốc).
 
 ## Việc tự động + kho pet (Module 6)
 
@@ -182,7 +188,7 @@ Trí nhớ AI tự lưu vào `config/mcgf_history.json` khi tắt server
 và nạp lại khi mở — cả 2 file config đều đã gitignore.
 Pet là entity thật nên tự lưu theo world (kể cả kho đồ), relog không mất.
 
-## Cấu trúc v1.3.0
+## Cấu trúc v1.4.0
 
 ```
 settings.gradle / build.gradle / gradle.properties
@@ -201,7 +207,7 @@ src/main/java/com/khoand/mcgf/
   GfCommands.java          — /gf (full M1-M8a)
 src/client/java/com/khoand/mcgf/
   GfClient.java            — dang ky renderer + nap skin
-  GfCompanionRenderer.java — model nguoi tay thuong
+  GfCompanionRenderer.java — model nguoi + hien vu khi/giap (M8b)
   GfSkins.java             — skin file > URL > mac dinh
 src/main/resources/
   fabric.mod.json
@@ -225,12 +231,13 @@ src/main/resources/
 - CI (`.github/workflows/build.yml`): mỗi push lên `main` tự build bằng Gradle 8.10.2 + JDK 21
   và đăng `.jar` ở Artifacts — vừa là release vừa kiểm tra compile.
 
-## Checklist test full v1.3.0
+## Checklist test full v1.4.0
 
 ```
-/gf version   → 1.3.0
+/gf version   → 1.4.0
 /gf config    → hiện cấu hình (gồm skin)
 /gf equip → /gf gear (dame/giáp đúng) → /gf attack (quái mất máu nhiều)
+→ nhìn pet: kiếm trên tay + giáp trên người
 /gf unequip → đồ về túi bạn
 ```
 /gf spawn → /gf follow → /gf attack → /gf stop → /gf mine → /gf collect → /gf feed
