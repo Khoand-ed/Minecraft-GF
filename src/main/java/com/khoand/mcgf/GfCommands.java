@@ -66,29 +66,32 @@ public final class GfCommands {
                         })
                         .then(CommandManager.literal("help").executes(ctx -> {
                             String ai = GfBrain.isOnlineReady() ? "online (Gemini)" : "offline (chua co key)";
+                            String p = GfConfig.get().chatPrefix;
                             ctx.getSource().sendFeedback(() -> Text.literal(
-                                    "§b[MCGF] Lenhs (AI: " + ai + "):\n"
-                                            + "§e/gf hello§r — chao companion\n"
-                                            + "§e/gf version§r — version mod\n"
-                                            + "§e/gf name <ten>§r — doi ten\n"
-                                            + "§e/gf say <text>§r — nhac lai\n"
-                                            + "§e/gf spawn|follow|stay|here|dismiss§r — dieu companion\n"
-                                            + "§e/gf goto <x> <y> <z>§r — den toa do\n"
-                                            + "§e@gf <cau hoi>§r — chat voi AI (prefix hien tai)\n"
-                                            + "§e/gf ask <cau hoi>§r — hoi AI\n"
-                                            + "§e/gf forget§r — xoa tri nho\n"
-                                            + "§e/gf ai on|off§r — bat/tat AI (OP)\n"
-                                            + "§e/gf apikey <key>§r — nap key Gemini (OP)\n"
-                                            + "§e/gf attack§r — danh quai gan nhat\n"
-                                            + "§e/gf stop§r — dung danh\n"
-                                            + "§e/gf mine§r — dao block dang nhin\n"
-                                            + "§e/gf collect§r — nhat do roi\n"
-                                            + "§e/gf feed§r — cho an\n"
-                                            + "§e/gf minevein|chop|farm§r — viec tu dong\n"
-                                            + "§e/gf bag|give|deposit§r — kho pet\n"
-                                            + "§e/gf equip|unequip|gear§r — trang bi\n"
-                                            + "§e/gf config§r — xem cau hinh\n"
-                                            + "§e/gf prefix <p>§r — doi prefix chat (OP)"),
+                                    "§b[MCGF] List lệnh (AI: " + ai + "):\n"
+                                            + "§6◆ Companion:§r\n"
+                                            + "§e/gf spawn§r gọi ra | §e/gf follow§r đi theo | §e/gf stay§r đứng yên\n"
+                                            + "§e/gf here§r kéo về | §e/gf dismiss§r cho về\n"
+                                            + "§e/gf goto <x> <y> <z>§r đến tọa độ | §e/gf name <tên>§r đổi tên\n"
+                                            + "§6◆ Chiến đấu & sinh tồn:§r\n"
+                                            + "§e/gf attack§r đánh quái gần nhất | §e/gf stop§r dừng\n"
+                                            + "§e/gf mine§r đào block đang nhìn | §e/gf collect§r nhặt đồ rơi\n"
+                                            + "§e/gf feed§r cho ăn thịt để hồi máu\n"
+                                            + "§6◆ Việc tự động:§r\n"
+                                            + "§e/gf minevein§r đào cả vỉa quặng | §e/gf chop§r đốn cây\n"
+                                            + "§e/gf farm§r thu lúa + trồng lại\n"
+                                            + "§e/gf bag§r xem kho | §e/gf give§r lấy đồ | §e/gf deposit§r cất rương\n"
+                                            + "§6◆ Trang bị:§r\n"
+                                            + "§e/gf equip§r mặc đồ xịn nhất | §e/gf unequip§r cởi đồ\n"
+                                            + "§e/gf gear§r xem đồ + dame/giáp\n"
+                                            + "§6◆ AI chat:§r\n"
+                                            + "§e" + p + " <câu hỏi>§r hỏi ngay trên chat\n"
+                                            + "§e/gf ask <câu hỏi>§r hỏi bằng lệnh | §e/gf forget§r xóa trí nhớ\n"
+                                            + "§e/gf ai on|off§r bật/tắt AI (OP) | §e/gf apikey <key>§r nạp key (OP)\n"
+                                            + "§6◆ Khác:§r\n"
+                                            + "§e/gf say <text>§r nhắc lại | §e/gf hello§r chào\n"
+                                            + "§e/gf config§r xem cấu hình | §e/gf prefix <p>§r đổi prefix (OP)\n"
+                                            + "§e/gf version§r xem version"),
                                     false);
                             return 1;
                         }))
