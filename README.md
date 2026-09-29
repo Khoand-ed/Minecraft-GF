@@ -1,5 +1,7 @@
 # MCGF AI Companion
 
+> English | [Tiếng Việt](README.vi.md) | [日本語](README.ja.md)
+
 A companion mod for **Minecraft 1.21.1 Java Edition (Fabric)**. Spawn a human-like buddy that follows you, fights with you, mines, farms, chats with AI, and carries its own inventory.
 
 > Repo: https://github.com/Khoand-ed/Minecraft-GF
@@ -23,7 +25,8 @@ A companion mod for **Minecraft 1.21.1 Java Edition (Fabric)**. Spawn a human-li
 ```
 /gf spawn    # summon your companion
 /gf follow   # it follows and protects you
-@gf hello    # chat with it (answers in Vietnamese, works without any key)
+@gf hello    # chat with it (Vietnamese/English/Japanese, works without any key)
+/gf lang en  # switch AI language: vi | en | ja
 ```
 
 ## Commands
@@ -94,7 +97,7 @@ Talk with the prefix (default `@gf`) anywhere in chat:
 | `/gf ai on\|off` | Toggle online AI (needs OP) |
 | `/gf apikey <key>` | Save a free Gemini key (needs OP, key is masked) |
 
-How it works: with a key it calls Gemini (async, no server lag) and knows your position, health and hunger plus recent conversation. Without a key (or if the network fails) it answers offline in Vietnamese. Memory is saved to `config/mcgf_history.json` on server stop and reloaded on start — each player has their own memory. Get a free key at https://aistudio.google.com/apikey.
+How it works: with a key it calls Gemini (async, no server lag) and knows your position, health and hunger plus recent conversation. Without a key (or if the network fails) it answers offline. AI language follows `/gf lang` (`vi` | `en` | `ja`) for both online and offline replies. Memory is saved to `config/mcgf_history.json` on server stop and reloaded on start — each player has their own memory. Get a free key at https://aistudio.google.com/apikey.
 
 ### Misc
 
@@ -104,6 +107,7 @@ How it works: with a key it calls Gemini (async, no server lag) and knows your p
 | `/gf hello` | Greeting |
 | `/gf config` | Show current settings |
 | `/gf prefix <p>` | Change the chat prefix (needs OP) |
+| `/gf lang vi\|en\|ja` | AI reply language (Vietnamese / English / Japanese) |
 | `/gf version` | Show mod version |
 
 ## Skins
@@ -123,6 +127,7 @@ Your companion looks like a player (classic arms). Skin priority, no rebuild nee
   "followDistance": 3.0,
   "teleportDistance": 24.0,
   "replyInVietnamese": true,
+  "language": "vi",
   "aiEnabled": true,
   "maxHistory": 8,
   "geminiApiKey": "",

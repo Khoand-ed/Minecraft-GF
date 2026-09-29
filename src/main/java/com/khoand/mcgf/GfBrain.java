@@ -77,12 +77,23 @@ public final class GfBrain {
             }
             String question = text.substring(prefix.length()).trim();
             if (question.isEmpty()) {
-                reply(sender, "Hỏi tui gì đó sau '" + prefix + "' nha. VD: " + prefix + " creeper là gì?");
+                reply(sender, emptyHint(prefix));
                 return;
             }
             ask(sender, question);
         });
         MinecraftGFMod.LOGGER.info("[MCGF] Da bat nghe chat prefix '{}'", GfConfig.get().chatPrefix);
+    }
+
+    private static String emptyHint(String prefix) {
+        switch (GfConfig.get().language.toLowerCase(Locale.ROOT)) {
+            case "ja":
+                return "「" + prefix + " ＜質問＞」と話しかけてね。例: " + prefix + " クリーパーってなに？";
+            case "en":
+                return "Ask me something after '" + prefix + "'. Ex: " + prefix + " what is a creeper?";
+            default:
+                return "Hỏi tui gì đó sau '" + prefix + "' nha. VD: " + prefix + " creeper là gì?";
+        }
     }
 
     /** Diem vao chung cho chat prefix va lenh /gf ask. */
@@ -285,8 +296,20 @@ public final class GfBrain {
     }
 
     private static String systemPrompt(String name, String context) {
-        return "Bạn là " + name + ", một người bạn đồng hành trong Minecraft 1.21.1 (mod MCGF). "
-                + "Tính cách vui vẻ, trung thành, nói tiếng Việt ngắn gọn dưới 200 ký tự, không dùng markdown. "
+        String lang = GfConfig.get().language.toLowerCase(Locale.ROOT);
+        String head;
+        String style;
+        if (lang.equals("ja")) {
+            head = "あなたは" + name + "、Minecraft 1.21.1の頼れる仲間です(MCGF mod)。";
+            style = "愉快で忠実に、日本語で200文字以内、markdownなしで短く返事してください。";
+        } else if (lang.equals("en")) {
+            head = "You are " + name + ", a loyal companion in Minecraft 1.21.1 (MCGF mod). ";
+            style = "Be cheerful and loyal, reply in English, under 200 characters, no markdown. ";
+        } else {
+            head = "Bạn là " + name + ", một người bạn đồng hành trong Minecraft 1.21.1 (mod MCGF). ";
+            style = "Tính cách vui vẻ, trung thành, nói tiếng Việt ngắn gọn dưới 200 ký tự, không dùng markdown. ";
+        }
+        return head + style
                 + context + " "
                 + "Các lệnh của bạn: /gf spawn (gọi ra), /gf follow (đi theo), /gf stay (ngồi yên), "
                 + "/gf here (kéo về), /gf goto x y z (đến tọa độ), /gf dismiss (cho về), "
@@ -316,6 +339,115 @@ public final class GfBrain {
     // ---------- Fallback offline (tieng Viet) ----------
 
     static String offlineReply(String question) {
+        switch (GfConfig.get().language.toLowerCase(Locale.ROOT)) {
+            case "ja":
+                return offlineReplyJa(question);
+            case "en":
+                return offlineReplyEn(question);
+            default:
+                return offlineReplyVi(question);
+        }
+    }
+
+    static String offlineReplyEn(String question) {
+        String q = question.toLowerCase(Locale.ROOT);
+        String name = GfConfig.get().companionName;
+
+        if (contains(q, "hello", "hi ", "hey", "morning")) {
+            return "Hey! I'm " + name + ", your companion. Type @gf + question to chat!";
+        }
+        if (contains(q, "your name", "who are you", "what are you")) {
+            return "I'm " + name + ", an AI buddy in the MCGF mod. I follow you, fight with you and answer questions!";
+        }
+        if (contains(q, "follow", "come with", "follow me")) {
+            return "Type /gf follow and I'll stick with you! /gf stay makes me sit still.";
+        }
+        if (contains(q, "stay", "sit", "wait", "stand still")) {
+            return "Ok! /gf stay and I'll sit right here.";
+        }
+        if (contains(q, "attack", "fight", "creeper", "zombie", "skeleton", "spider", "combat", "mob", "kill")) {
+            return "Type /gf attack and I'll charge the nearest mob! /gf stop to call me back. I also bite anyone who hits you!";
+        }
+        if (contains(q, "mine", "dig", "ore", "diamond", "iron", "pickaxe", "vein")) {
+            return "Look at a block and type /gf mine! For a WHOLE vein use /gf minevein — loot goes to my bag, /gf give to take it!";
+        }
+        if (contains(q, "eat", "feed", "food", "meat", "hungry", "health", "heal", "hungry")) {
+            return "Put meat in your inventory and type /gf feed — I'll eat and heal! I also regen slowly out of combat.";
+        }
+        if (contains(q, "collect", "pickup", "pick up", "drop", "xp", "experience")) {
+            return "Type /gf collect and I'll pull drops + xp within 10 blocks to you! My own loot is in my bag — /gf bag, /gf give!";
+        }
+        if (contains(q, "bag", "give", "deposit", "chest", "store", "wood", "tree", "chop", "farm", "wheat", "auto")) {
+            return "I have my own 9-slot bag! /gf minevein digs ore, /gf chop chops trees, /gf farm harvests (auto-replants), /gf bag views, /gf give takes, /gf deposit stores in the nearest chest!";
+        }
+        if (contains(q, "gear", "equip", "armor", "armour", "weapon", "sword", "wear")) {
+            return "Give me weapons/armor, then /gf equip — I'll wear the best, damage and armor are real! /gf gear to view, /gf unequip to strip!";
+        }
+        if (contains(q, "key", "api", "gemini", "online", "smart")) {
+            return "Ask an OP to run /gf apikey <free Gemini key> and I'll get way smarter! Right now I'm answering offline.";
+        }
+        if (contains(q, "help", "command", "how", "use")) {
+            return "Commands: /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Chat with @gf + question!";
+        }
+        if (contains(q, "thank")) {
+            return "Anytime! Adventuring with you is the best!";
+        }
+        if (contains(q, "bye", "good night", "sleep")) {
+            return "Bye! Type /gf spawn whenever you need me!";
+        }
+        return "Hmm, that's a tough one (" + truncate(question, 60) + "). Ask me about Minecraft or type /gf help!";
+    }
+
+    static String offlineReplyJa(String question) {
+        String q = question.toLowerCase(Locale.ROOT);
+        String name = GfConfig.get().companionName;
+
+        if (contains(q, "こんにちは", "こんにちわ", "ハロー", "やあ", "おはよう")) {
+            return "やあ！僕は" + name + "、君の仲間だよ。「@gf + 質問」で話しかけてね！";
+        }
+        if (contains(q, "名前", "なまえ", "誰", "だれ")) {
+            return "僕は" + name + "、MCGF modのAI仲間だよ。ついていくし、一緒に戦うし、質問にも答えるよ！";
+        }
+        if (contains(q, "ついて", "フォロー", "きて")) {
+            return "/gf follow でついていくよ！/gf stay でその場で待つよ！";
+        }
+        if (contains(q, "待て", "まて", "すわり", "おすわり", "とまれ")) {
+            return "わかった！/gf stay でここで待ってるね！";
+        }
+        if (contains(q, "攻撃", "こうげき", "戦", "クリーパー", "ゾンビ", "スケルトン", "モンスター", "クモ", "たたか")) {
+            return "/gf attack で近くの敵に突撃するよ！/gf stop で戻るよ。君を攻撃する奴は僕がやっつける！";
+        }
+        if (contains(q, "掘る", "ほる", "ダイヤ", "鉱石", "こうせき", "鉄", "てつ", "つるはし", "マイン")) {
+            return "ブロックを見て /gf mine！鉱脈ごとなら /gf minevein — 戦利品は僕のカバンに。/gf give で受け取って！";
+        }
+        if (contains(q, "食べる", "たべる", "餌", "えさ", "肉", "にく", "ご飯", "ごはん", "回復", "かいふく", "お腹", "おなか")) {
+            return "君の持ち物に肉を入れて /gf feed！食べて回復するよ。戦闘以外では少しずつ自然回復するよ！";
+        }
+        if (contains(q, "集める", "あつめる", "拾う", "ひろう", "経験値", "けいけんち", "xp")) {
+            return "/gf collect で10ブロック以内のドロップと経験値を集めるよ！僕の戦利品はカバンに — /gf bag、/gf give！";
+        }
+        if (contains(q, "カバン", "かばん", "渡す", "わたす", "チェスト", "預ける", "あずける", "木", "き", "畑", "はたけ", "自動", "じどう")) {
+            return "僕専用の9スロットのカバンがあるよ！/gf minevein で採掘、/gf chop で伐採、/gf farm で収穫（植え直し付き）、/gf bag で確認、/gf give で受取、/gf deposit で近くのチェストに保管！";
+        }
+        if (contains(q, "装備", "そうび", "剣", "けん", "鎧", "よろい", "武器", "ぶき", "着る", "きる")) {
+            return "武器・防具を渡して /gf equip！一番いいのを自動で装備するよ。攻撃力も防御力も本物！/gf gear で確認、/gf unequip で脱ぐよ！";
+        }
+        if (contains(q, "キー", "api", "gemini", "オンライン", "賢い", "かしこい")) {
+            return "OPの人に /gf apikey <無料のGeminiキー> を入力してもらうと、もっと賢くなるよ！今はオフライン回答中！";
+        }
+        if (contains(q, "ヘルプ", "助けて", "たすけて", "コマンド", "使い方", "つかいかた")) {
+            return "コマンド: /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear。@gf + 質問でおしゃべり！";
+        }
+        if (contains(q, "ありがとう")) {
+            return "どういたしまして！君と冒険するのが一番楽しいよ！";
+        }
+        if (contains(q, "バイバイ", "さようなら", "おやすみ", "じゃあね")) {
+            return "またね！必要な時は /gf spawn で呼んで！";
+        }
+        return "うーん、難しい質問だ (" + truncate(question, 60) + ")。マイクラのことか /gf help を試してね！";
+    }
+
+    static String offlineReplyVi(String question) {
         String q = question.toLowerCase(Locale.ROOT);
         String name = GfConfig.get().companionName;
 

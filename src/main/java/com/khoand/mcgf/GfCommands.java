@@ -1,5 +1,7 @@
 package com.khoand.mcgf;
 
+import java.util.Locale;
+
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -48,6 +50,7 @@ import net.minecraft.text.Text;
  * /gf gear              — xem do dang mac (M8a)
  * /gf config            — xem cau hinh (M5)
  * /gf prefix &lt;p&gt;        — doi prefix chat (M5, can OP)
+ * /gf lang vi|en|ja      — ngon ngu AI (ca nhan, luu config)
  * </pre>
  */
 public final class GfCommands {
@@ -91,7 +94,7 @@ public final class GfCommands {
                                             + "§6◆ Khác:§r\n"
                                             + "§e/gf say <text>§r nhắc lại | §e/gf hello§r chào\n"
                                             + "§e/gf config§r xem cấu hình | §e/gf prefix <p>§r đổi prefix (OP)\n"
-                                            + "§e/gf version§r xem version"),
+                                            + "§e/gf lang vi|en|ja§r ngôn ngữ AI | §e/gf version§r xem version"),
                                     false);
                             return 1;
                         }))
@@ -105,7 +108,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.4.0 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.4.1 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -393,7 +396,8 @@ public final class GfCommands {
                                             + c.teleportDistance + " block\n"
                                             + "§7- Skin: §e" + c.skinFile
                                             + ((c.skinUrl == null || c.skinUrl.isBlank())
-                                                    ? " (hoac mac dinh)" : " / URL da nap")),
+                                                    ? " (hoac mac dinh)" : " / URL da nap") + "\n"
+                                            + "§7- Ngon ngu AI: §e" + c.language),
                                     false);
                             return 1;
                         }))
@@ -410,6 +414,21 @@ public final class GfCommands {
                                     ctx.getSource().sendFeedback(
                                             () -> Text.literal("§b[MCGF]§r Prefix chat moi: " + p
                                                     + " (vd: " + p + " xin chao)"),
+                                            false);
+                                    return 1;
+                                })))
+                        .then(CommandManager.literal("lang")
+                                .then(CommandManager.argument("l", StringArgumentType.word()).executes(ctx -> {
+                                    String l = StringArgumentType.getString(ctx, "l").toLowerCase(Locale.ROOT);
+                                    if (!l.equals("vi") && !l.equals("en") && !l.equals("ja")) {
+                                        ctx.getSource().sendError(Text.literal("Dung: /gf lang vi|en|ja"));
+                                        return 0;
+                                    }
+                                    GfConfig.get().language = l;
+                                    GfConfig.save();
+                                    ctx.getSource().sendFeedback(
+                                            () -> Text.literal("§b[MCGF]§r AI language: " + l
+                                                    + " (applies to Gemini + offline replies)"),
                                             false);
                                     return 1;
                                 })))

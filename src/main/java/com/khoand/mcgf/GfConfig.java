@@ -71,5 +71,7 @@ public final class GfConfig {
         public String skinFile = "mcgf_skin.png";
         /** Module 7 — link PNG truc tiep (dung khi khong co file). */
         public String skinUrl = "";
+        /** Ngon ngu AI: "vi" | "en" | "ja" (/gf lang). */
+        public String language = "vi";
     }
 }
