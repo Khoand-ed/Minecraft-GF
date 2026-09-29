@@ -1,158 +1,121 @@
-# MCGF AI Companion — Minecraft 1.21.1 Java (Fabric)
+# MCGF AI Companion
 
-AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, dạng **Fabric mod**.
+A companion mod for **Minecraft 1.21.1 Java Edition (Fabric)**. Spawn a human-like buddy that follows you, fights with you, mines, farms, chats with AI, and carries its own inventory.
 
 > Repo: https://github.com/Khoand-ed/Minecraft-GF
-> MC: `1.21.1` | Loader: `Fabric 0.16.14` | Java: `21` | Yarn: `1.21.1+build.3`
+> MC `1.21.1` | Fabric Loader `0.16.14` | Fabric API `0.102.0+1.21.1` | Java `21`
 
-## Lộ trình module (làm từng bước, bạn kiểm tra từng bước)
-
-- [x] **M1 — Core:** scaffold Fabric 1.21.1, config `config/mcgf.json`, lệnh `/gf help|hello|version|name|say`
-- [x] **M2 — Follow:** companion đi theo, `/gf spawn|follow|stay|here|goto|dismiss`, tự teleport khi lạc
-- [x] **M3 — Chat AI:** chat `@gf <câu hỏi>`, Gemini online + fallback offline, `/gf ask|ai|forget|apikey`
-- [x] **M4 — Sinh tồn:** `/gf attack|stop|mine|collect|feed`, tự hồi máu ngoài giao tranh
-- [x] **M5 — Polish:** lưu trí nhớ AI, `/gf config|prefix`, CI build ra `.jar`
-- [x] **M6 — Việc tự động:** `/gf minevein|chop|farm`, kho pet riêng + `/gf bag|give|deposit`
-- [x] **M7 — Dáng người:** companion như player, skin custom (file/URL) + skin mặc định
-- [x] **M8a — Trang bị:** `/gf equip|unequip|gear`, dame/giáp tính thật, lưu NBT
-- [x] **M8b — Hiện đồ (hiện tại):** vũ khí trên tay + giáp trên người (renderer)
-
-**Quy tắc:** xong 1 module → bạn test → OK mới làm module tiếp. Chưa push khi bạn chưa duyệt.
-
-## Yêu cầu máy
+## Requirements
 
 - Minecraft Java Edition **1.21.1**
 - Fabric Loader **0.16.14** + Fabric API `0.102.0+1.21.1`
-- JDK **21** (`java -version` phải ra 21)
-- Gradle 8.10.2 (dùng `./gradlew` kèm theo, lần đầu cần mạng để tải MC + mappings)
+- JDK **21** (only needed to build from source)
 
-## Chạy thử / lấy file mod (v1.4.0)
+## Install
 
-Cách 1 — tải bản release (khuyên dùng):
-1. Vào https://github.com/Khoand-ed/Minecraft-GF/releases → bản mới nhất.
-2. Tải `mcgf-ai-companion-1.4.0.jar` ở Assets.
-3. Copy vào `.minecraft/mods/` (profile Fabric 1.21.1 + Fabric API).
+1. Download `mcgf-ai-companion-<version>.jar` from
+   https://github.com/Khoand-ed/Minecraft-GF/releases (latest release).
+2. Put it in `.minecraft/mods/` (Fabric 1.21.1 profile with Fabric API).
+3. Launch the game, open a world with cheats enabled (or OP on a server).
 
-Cách 2 — build local:
-
-```powershell
-cd D:\MCGF
-.\gradlew.bat build
-# build/libs/mcgf-ai-companion-1.4.0.jar -> copy vào .minecraft/mods/ (Fabric 1.21.1)
-```
-
-## Trang bị cho companion (Module 8a)
+## Quick start (in game)
 
 ```
-/gf equip    # mặc vũ khí dame cao nhất + giáp tốt nhất từng slot
-             # (lấy từ kho pet trước, thiếu mới lấy túi bạn)
-/gf gear     # xem đang mặc gì + dame tay + giáp
-/gf unequip  # cởi hết trả về túi bạn
+/gf spawn    # summon your companion
+/gf follow   # it follows and protects you
+@gf hello    # chat with it (answers in Vietnamese, works without any key)
 ```
 
-Kết quả đúng:
-- `/gf gear` báo dame (tay không = 4, kiếm kim cương = 7...) và giáp đúng tổng.
-- Đánh quái (`/gf attack`) quái mất máu nhiều hơn rõ rệt khi có kiếm.
-- Mặc giáp sắt full → quái đánh đỡ đau hẳn (giáp tính thật qua hệ damage vanilla).
-- Tắt/mở server: đồ đang mặc còn nguyên (lưu NBT `MCGFGear`).
-- M8b vẽ đồ lên người: kiếm cầm tay phải, giáp hiện đúng từng phần.
+## Commands
 
-## Hiện đồ trên người (Module 8b)
+### Companion
 
-Không thêm lệnh mới — `/gf equip` xong nhìn pet là thấy:
-- Vũ khí cầm ở tay phải (kể cả cuốc/rìu — tư thế cầm item).
-- Giáp hiện đúng mũ/áo/quần/giày, màu theo chất liệu (da nhuộm? hiện màu gốc).
+| Command | What it does |
+|---|---|
+| `/gf spawn` | Summon your companion (tamed to you, named, persistent across relogs) |
+| `/gf follow` | Follow you (default behavior) |
+| `/gf stay` | Stand still (sneak pose) |
+| `/gf here` | Teleport it next to you |
+| `/gf goto <x> <y> <z>` | Send it to coordinates, then stand still |
+| `/gf dismiss` | Send it away |
+| `/gf name <name>` | Rename it (also updates the nameplate) |
+| `/gf help` | Full command list, grouped by feature |
 
-## Việc tự động + kho pet (Module 6)
+If it gets lost far away (over `teleportDistance`, default 24 blocks) it teleports back by itself.
 
-```
-/gf minevein  # đào cả vỉa quặng gần nhất (tối đa 32 block, bán kính 24)
-              # quặng: coal/iron/copper/gold/redstone/lapis/diamond/emerald
-/gf chop      # đốn cả cây gần nhất
-/gf farm      # thu lúa chín 8 block quanh pet + tự trồng lại
-/gf stop      # hủy việc đang làm
-/gf bag       # xem kho pet (9 ô)
-/gf give      # lấy hết đồ từ kho pet (túi đầy thì rơi dưới chân)
-/gf deposit   # cất kho pet vào rương/thùng gần nhất (8 block quanh pet)
-```
+### Combat & survival
 
-Kết quả đúng:
-- Pet dịch chuyển tới từng block, vung tay + hạt vỡ, làm 1 block/4 tick.
-- Đồ **rơi ra đất đúng survival** rồi pet hút vào kho riêng (không vào túi bạn ngay).
-- Xong việc chat báo số block + tổng món trong kho.
-- Pet sói cũ (world đã chơi) tự thành dáng người, **giữ nguyên kho đồ**.
+| Command | What it does |
+|---|---|
+| `/gf attack` | Attack the nearest hostile mob (16 blocks) |
+| `/gf stop` | Stop fighting / cancel the current auto-job |
+| `/gf mine` | Look at a block (within 6 blocks) and it mines it for you — real survival drops |
+| `/gf collect` | Pull nearby dropped items + XP (10 blocks) into your inventory |
+| `/gf feed` | Feed it meat from your inventory to heal it |
 
-## Ngoại hình người + skin (Module 7)
+It also slowly regenerates health outside of combat. Meat heals more when cooked.
 
-Companion giờ trông như **player** (model tay thường), tên hiện trên đầu như cũ.
-`/gf stay` cho pose ngồi sneak cho dễ nhận biết.
+### Auto-work (it works block by block, ~1 block / 4 ticks)
 
-Skin theo thứ tự ưu tiên (không cần build lại mod):
-1. File `config/mcgf_skin.png` (PNG 64x64, thả vào thư mục config rồi relog).
-2. `skinUrl` trong `config/mcgf.json` (link PNG trực tiếp).
-3. Skin mặc định trong mod (áo hoodie xanh + quần jean).
+| Command | What it does |
+|---|---|
+| `/gf minevein` | Mines a whole nearby ore vein (max 32 blocks, 24-block radius) |
+| `/gf chop` | Chops a whole nearby tree |
+| `/gf farm` | Harvests ripe crops nearby and replants them |
+| `/gf bag` | Show its private 9-slot inventory |
+| `/gf give` | Take everything from its inventory (overflow drops at your feet) |
+| `/gf deposit` | Store its inventory into the nearest chest/barrel (8 blocks) |
 
-```
-/gf config    # xem cấu hình, gồm skinFile/skinUrl đang dùng
-```
+Drops fall on the ground like real survival, then it picks them into its own inventory. Old wolf-form pets from earlier worlds convert automatically and keep their inventory.
 
-## Sinh tồn cùng companion (Module 4, cần `/gf spawn` trước)
+### Gear (real stats, saved with the pet)
 
-```
-/gf attack    # đánh quái hostile gần nhất (16 block)
-/gf stop      # dừng đánh, quay về theo bạn
-/gf mine      # nhìn vào block (trong 6 block) rồi gọi → pet đào giúp, rớt đồ thật
-/gf collect   # hút đồ rơi + xp trong 10 block vào túi bạn
-/gf feed      # cho pet ăn thịt trong túi bạn để hồi máu
-```
+| Command | What it does |
+|---|---|
+| `/gf equip` | Equip the best weapon + armor from its bag first, then your inventory |
+| `/gf gear` | Show equipped items, attack damage and armor points |
+| `/gf unequip` | Take everything off, back to your inventory |
 
-Kết quả đúng:
-- `/gf attack` → sói lao vào cắn quái, chat báo tên quái.
-- `/gf mine` → block vỡ, rớt đồ như tự đào (bedrock báo không đào được).
-- `/gf collect` → đồ bay vào túi, báo số đống + xp.
-- Pet mất máu ngoài giao tranh tự hồi 1 máu/5 giây (kèm hạt vui vẻ).
-- Hỏi AI cũng được: `@gf làm sao cho bạn ăn?` → AI chỉ `/gf feed`.
+Attack damage and armor protection are real (vanilla damage system), and gear is rendered on its body: weapon in the right hand, armor per piece.
 
-## Chat AI với companion (Module 3)
+### AI chat
 
-Không key vẫn chơi được (trả lời offline tiếng Việt). Có key Gemini (miễn phí) thì thông minh hẳn:
+Talk with the prefix (default `@gf`) anywhere in chat:
 
 ```
-# 1. Lấy key miễn phí tại https://aistudio.google.com/apikey
-# 2. Trong game (cần OP/cheats):
-/gf apikey AIza...key-cua-ban
-@gf creeper là gì?
-@gf tui đang ở đâu?
-/gf ask làm sao tìm kim cương?
-/gf forget        # xóa trí nhớ hội thoại
-/gf ai off        # chỉ trả lời offline
-/gf ai on         # bật lại AI online
+@gf what is a creeper?
+@gf where am I?
 ```
 
-Kết quả đúng:
-- Gõ `@gf ...` trên chat → cả server thấy `[GF] <trả lời>`.
-- Chưa có key → trả lời offline + gợi ý nạp key; có key → Gemini trả lời (biết cả vị trí/máu của bạn).
-- Key lưu trong `config/mcgf.json` (file này đã gitignore, không push lên GitHub).
+| Command | What it does |
+|---|---|
+| `/gf ask <question>` | Same as chatting with the prefix |
+| `/gf forget` | Clear conversation memory |
+| `/gf ai on\|off` | Toggle online AI (needs OP) |
+| `/gf apikey <key>` | Save a free Gemini key (needs OP, key is masked) |
 
-## Test Module 2 (cũ, Singleplayer, cheats ON hoặc OP)
+How it works: with a key it calls Gemini (async, no server lag) and knows your position, health and hunger plus recent conversation. Without a key (or if the network fails) it answers offline in Vietnamese. Memory is saved to `config/mcgf_history.json` on server stop and reloaded on start — each player has their own memory. Get a free key at https://aistudio.google.com/apikey.
 
-```
-/gf help
-/gf spawn      # gọi companion sói ra, tự thuần + đặt tên
-/gf follow     # đi theo + đánh quái cùng bạn
-/gf stay       # ngồi yên
-/gf here       # kéo về cạnh bạn
-/gf goto 100 64 200   # đến tọa độ và đứng yên
-/gf dismiss    # cho biến mất
-/gf name Luna  # đổi tên (cả bảng tên trên đầu companion)
-/gf version    # phải ra 1.3.0
-```
+### Misc
 
-Kết quả đúng:
-- Companion dáng người hiện ra cạnh bạn, trên đầu có tên (mặc định `GF`), tự đi theo.
-- Đánh quái tấn công bạn (tự bảo vệ chủ + theo lệnh `/gf attack`).
-- Lạc quá `teleportDistance` (mặc định 24 block) thì tự teleport về.
-- File `config/mcgf.json` đầy đủ:
+| Command | What it does |
+|---|---|
+| `/gf say <text>` | Make it repeat text |
+| `/gf hello` | Greeting |
+| `/gf config` | Show current settings |
+| `/gf prefix <p>` | Change the chat prefix (needs OP) |
+| `/gf version` | Show mod version |
+
+## Skins
+
+Your companion looks like a player (classic arms). Skin priority, no rebuild needed:
+
+1. `config/mcgf_skin.png` — drop any 64x64 PNG skin in the config folder, relog.
+2. `skinUrl` in `config/mcgf.json` — direct PNG link, used when no file exists.
+3. Built-in default skin (blue hoodie + jeans).
+
+## Config (`config/mcgf.json`)
+
 ```json
 {
   "companionName": "GF",
@@ -169,82 +132,40 @@ Kết quả đúng:
 }
 ```
 
-## Test Module 1 (cũ)
+`config/mcgf.json` and `config/mcgf_history.json` are git-ignored — your API key never leaves your machine.
 
-```
-/gf hello
-/gf say xin chào mọi người
-/gf version    # phải ra 1.3.0
-```
+## Multiplayer
 
-## Config trong game (Module 5)
+- Works on a **Fabric 1.21.1 server**: put the mod + Fabric API in the server `mods` folder.
+- **Every player must install** Fabric + the mod (custom entity, vanilla clients can't render it).
+- Does **not** work on Realms or Vanilla/Paper/Spigot servers.
+- OP-only commands: `apikey`, `ai`, `prefix`. Everyone gets their own pet and AI memory.
 
-```
-/gf config       # xem toàn bộ cấu hình (key che ****)
-/gf prefix @bot  # đổi prefix chat (cần OP), chat "@bot xin chào" để thử
-```
+## Build from source
 
-Trí nhớ AI tự lưu vào `config/mcgf_history.json` khi tắt server
-và nạp lại khi mở — cả 2 file config đều đã gitignore.
-Pet là entity thật nên tự lưu theo world (kể cả kho đồ), relog không mất.
+Push to `main` triggers the `Build mod` workflow (Gradle 8.10.2 + JDK 21); the `.jar` is published under Artifacts. Or locally:
 
-## Cấu trúc v1.4.0
-
-```
-settings.gradle / build.gradle / gradle.properties
-.github/workflows/build.yml   — CI: build + up artifact .jar mỗi push main
-src/main/java/com/khoand/mcgf/
-  MinecraftGFMod.java      — entrypoint + tick (job/teleport/heal) + nap/luu tri nho
-  GfBrain.java             — nghe chat @gf, gọi Gemini async, fallback offline, persist
-  GfSurvival.java          — attack/stop/mine/collect/feed/tickHeal
-  GfAutoSkills.java        — job minevein/chop/farm + give/deposit/bag
-  GfInv.java               — helper nhet do vao moi loai kho
-  GfEntities.java          — EntityType mcgf:companion (0.6 x 1.8)
-  GfCompanionEntity.java   — TameableEntity dang nguoi + kho rieng (NBT MCGFBag) + gear (NBT MCGFGear)
-  GfGear.java              — bang dame/giap + equip/unequip/showGear
-  GfCompanionManager.java  — spawn/follow/stay/goto/here/dismiss
-  GfConfig.java            — config json
-  GfCommands.java          — /gf (full M1-M8a)
-src/client/java/com/khoand/mcgf/
-  GfClient.java            — dang ky renderer + nap skin
-  GfCompanionRenderer.java — model nguoi + hien vu khi/giap (M8b)
-  GfSkins.java             — skin file > URL > mac dinh
-src/main/resources/
-  fabric.mod.json
-  assets/mcgf/textures/entity/companion.png  — skin mac dinh
+```powershell
+cd D:\MCGF
+.\gradlew.bat build
+# build/libs/mcgf-ai-companion-<version>.jar
 ```
 
-## Ghi chú kỹ thuật 1.21.1
-
-- Dùng Yarn `1.21.1+build.3`, Loom `1.7.4`, `options.release = 21`.
-- Lệnh dùng `CommandRegistrationCallback` (Fabric API v2) — chuẩn cho 1.21.1.
-- `environment: "*"` để chạy cả client + dedicated server.
-- Companion dáng người (`TameableEntity` + goals follow/bảo vệ), renderer model người
-  tay thường, skin file > URL > mặc định. Pet sói cũ tự chuyển dáng, giữ kho đồ.
-- Việc tự động chạy job 1 block/4 tick, tối đa 32 block: drops đúng survival,
-  rương đôi chỉ tính nửa kề bên khi deposit.
-- Chat AI gọi Gemini qua `java.net.http` (JDK sẵn, không thêm dependency),
-  chạy thread riêng + `server.execute()` trả lời → không lag server.
-  Key chỉ nằm ở `config/mcgf.json` local (đã gitignore).
-- Sinh tồn tôn trọng luật survival: đào bằng `tryBreakBlock` (rớt đồ/mòn tool thật),
-  ăn thịt thật từ túi chủ, nhặt đồ bằng `insertStack` vào túi chủ.
-- CI (`.github/workflows/build.yml`): mỗi push lên `main` tự build bằng Gradle 8.10.2 + JDK 21
-  và đăng `.jar` ở Artifacts — vừa là release vừa kiểm tra compile.
-
-## Checklist test full v1.4.0
+## Full test checklist
 
 ```
-/gf version   → 1.4.0
-/gf config    → hiện cấu hình (gồm skin)
-/gf equip → /gf gear (dame/giáp đúng) → /gf attack (quái mất máu nhiều)
-→ nhìn pet: kiếm trên tay + giáp trên người
-/gf unequip → đồ về túi bạn
-```
+/gf version → current version
 /gf spawn → /gf follow → /gf attack → /gf stop → /gf mine → /gf collect → /gf feed
-/gf minevein → đợi đào xong → /gf bag → /gf give → /gf deposit (đặt rương cạnh pet)
-/gf chop → /gf farm (cần ruộng lúa chín gần pet)
-/gf prefix @bot → chat "@bot xin chào"
-/gf apikey <key> → @gf creeper là gì? (online)
-Thả file PNG 64x64 vào config/mcgf_skin.png → relog → pet đổi skin
-Tắt/mở server → AI vẫn nhớ hội thoại cũ, kho pet còn nguyên
+/gf minevein → wait → /gf bag → /gf give → /gf deposit (chest next to pet)
+/gf chop → /gf farm (needs ripe crops near the pet)
+/gf equip → /gf gear (damage/armor correct) → weapon + armor visible on body
+/gf apikey <key> → @gf where am I? (it knows your position)
+/gf prefix @bot → "@bot hello"
+/gf config → shows settings including skin
+Drop a 64x64 PNG into config/mcgf_skin.png → relog → new skin
+Restart server → AI memory and pet inventory intact
 ```
+
+## License
+
+MIT — see `LICENSE`.
