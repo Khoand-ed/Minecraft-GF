@@ -26,9 +26,9 @@ AI bạn đồng hành chơi cùng bạn trong Minecraft 1.21.1 Java Edition, d�
 
 ## Chạy thử / lấy file mod (v1.2.0)
 
-Cách 1 — CI tự build (khuyên dùng, không cần cài Gradle):
-1. Vào tab **Actions** của repo → workflow **Build mod** → lần chạy mới nhất.
-2. Tải artifact **mcgf-jar** → được `mcgf-ai-companion-1.2.0.jar`.
+Cách 1 — tải bản release (khuyên dùng):
+1. Vào https://github.com/Khoand-ed/Minecraft-GF/releases → bản mới nhất.
+2. Tải `mcgf-ai-companion-1.2.0.jar` ở Assets.
 3. Copy vào `.minecraft/mods/` (profile Fabric 1.21.1 + Fabric API).
 
 Cách 2 — build local:
