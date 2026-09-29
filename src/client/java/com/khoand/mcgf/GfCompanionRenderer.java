@@ -21,10 +21,12 @@ public class GfCompanionRenderer
         extends BipedEntityRenderer<GfCompanionEntity, PlayerEntityModel<GfCompanionEntity>> {
     public GfCompanionRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new PlayerEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER), false), 0.5F);
-        this.addFeature(new HeldItemFeatureRenderer<>(this));
-        this.addFeature(new ArmorFeatureRenderer<>(this,
-                new BipedEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)),
-                new BipedEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
+        this.addFeature(new HeldItemFeatureRenderer<>(this, ctx.getHeldItemRenderer()));
+        BipedEntityModel<GfCompanionEntity> inner =
+                new BipedEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER_INNER_ARMOR));
+        BipedEntityModel<GfCompanionEntity> outer =
+                new BipedEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR));
+        this.addFeature(new ArmorFeatureRenderer<>(this, inner, outer, ctx.getModelManager()));
     }
 
     @Override
