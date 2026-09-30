@@ -87,6 +87,8 @@ public final class GfBrain {
 
     private static String emptyHint(String prefix) {
         switch (GfConfig.get().language.toLowerCase(Locale.ROOT)) {
+            case "fr":
+                return "Pose-moi une question après '" + prefix + "'. Ex : " + prefix + " c'est quoi un creeper ?";
             case "ja":
                 return "「" + prefix + " ＜質問＞」と話しかけてね。例: " + prefix + " クリーパーってなに？";
             case "en":
@@ -299,7 +301,10 @@ public final class GfBrain {
         String lang = GfConfig.get().language.toLowerCase(Locale.ROOT);
         String head;
         String style;
-        if (lang.equals("ja")) {
+        if (lang.equals("fr")) {
+            head = "Tu es " + name + ", un compagnon loyal dans Minecraft 1.21.1 (mod MCGF). ";
+            style = "Sois joyeux et loyal, réponds en français, en moins de 200 caractères, sans markdown. ";
+        } else if (lang.equals("ja")) {
             head = "あなたは" + name + "、Minecraft 1.21.1の頼れる仲間です(MCGF mod)。";
             style = "愉快で忠実に、日本語で200文字以内、markdownなしで短く返事してください。";
         } else if (lang.equals("en")) {
@@ -340,6 +345,8 @@ public final class GfBrain {
 
     static String offlineReply(String question) {
         switch (GfConfig.get().language.toLowerCase(Locale.ROOT)) {
+            case "fr":
+                return offlineReplyFr(question);
             case "ja":
                 return offlineReplyJa(question);
             case "en":
@@ -347,6 +354,55 @@ public final class GfBrain {
             default:
                 return offlineReplyVi(question);
         }
+    }
+
+    static String offlineReplyFr(String question) {
+        String q = question.toLowerCase(Locale.ROOT);
+        String name = GfConfig.get().companionName;
+
+        if (contains(q, "bonjour", "salut", "coucou", "hello", "bonsoir")) {
+            return "Salut ! Je suis " + name + ", ton compagnon. Tape @gf + question pour discuter !";
+        }
+        if (contains(q, "ton nom", "qui es", "tu es quoi", "c'est quoi ton")) {
+            return "Je suis " + name + ", un compagnon IA du mod MCGF. Je te suis, je combats avec toi et je réponds aux questions !";
+        }
+        if (contains(q, "suis", "suivre", "suivez", "viens", "suis-moi")) {
+            return "Tape /gf follow et je te colle ! /gf stay pour rester immobile.";
+        }
+        if (contains(q, "reste", "assis", "attends", "immobile", "stop")) {
+            return "Ok ! /gf stay et je reste ici même.";
+        }
+        if (contains(q, "attaque", "combat", "creeper", "zombie", "squelette", "araignée", "monstre", "tuer", "bats")) {
+            return "Tape /gf attack et je charge le mob le plus proche ! /gf stop pour me rappeler. Je mords aussi quiconque te frappe !";
+        }
+        if (contains(q, "mine", "miner", "diamant", "fer", "pioche", "filon", "creuser", "minerai")) {
+            return "Regarde un bloc et tape /gf mine ! Pour TOUT un filon : /gf minevein — le butin va dans mon sac, /gf give pour le prendre !";
+        }
+        if (contains(q, "manger", "nourrir", "viande", "faim", "vie", "soigner", "santé", "repas")) {
+            return "Mets de la viande dans ton inventaire et tape /gf feed — je mange et je soigne ! Hors combat je régénère aussi doucement.";
+        }
+        if (contains(q, "ramasser", "récupérer", "prendre", "drop", "xp", "expérience", "sol")) {
+            return "Tape /gf collect et j'aspire drops + xp à 10 blocs ! Mon butin à moi est dans mon sac — /gf bag, /gf give !";
+        }
+        if (contains(q, "sac", "donner", "donne", "coffre", "ranger", "range", "bois", "arbre", "couper", "ferme", "blé", "auto")) {
+            return "J'ai mon sac perso de 9 slots ! /gf minevein pour miner, /gf chop pour abattre, /gf farm pour récolter (replante auto), /gf bag pour voir, /gf give pour prendre, /gf deposit pour ranger au coffre proche !";
+        }
+        if (contains(q, "équiper", "equiper", "armure", "arme", "épée", "porter", "mettre", "gear")) {
+            return "Donne-moi armes/armures puis /gf equip — j'équipe le meilleur tout seul, dégâts et armure réels ! /gf gear pour voir, /gf unequip pour retirer !";
+        }
+        if (contains(q, "clé", "api", "gemini", "ligne", "intelligent", "en ligne")) {
+            return "Demande à un OP de taper /gf apikey <clé Gemini gratuite> et je deviendrai bien plus malin ! Là je réponds hors-ligne.";
+        }
+        if (contains(q, "aide", "commande", "comment", "utiliser", "help")) {
+            return "Commandes : /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Discute avec @gf + question !";
+        }
+        if (contains(q, "merci")) {
+            return "De rien ! Partir à l'aventure avec toi, c'est le meilleur !";
+        }
+        if (contains(q, "au revoir", "bye", "bonne nuit", "adieu")) {
+            return "À plus ! Tape /gf spawn quand tu as besoin de moi !";
+        }
+        return "Hmm, colle (" + truncate(question, 60) + "). Parle-moi de Minecraft ou tape /gf help !";
     }
 
     static String offlineReplyEn(String question) {

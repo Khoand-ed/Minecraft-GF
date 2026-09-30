@@ -1,6 +1,6 @@
 # MCGF AI Companion
 
-> [English](README.md) | [Tiếng Việt](README.vi.md) | 日本語
+> [English](README.md) | [Tiếng Việt](README.vi.md) | 日本語 | [Français](README.fr.md)
 
 **Minecraft 1.21.1 Java Edition (Fabric)** 用の仲間mod。人型の相棒を召喚：ついてくる、共闘、採掘、農業、AIチャット、専用インベントリ付き。
 
@@ -97,7 +97,7 @@
 | `/gf ai on\|off` | オンラインAI切替（OP） |
 | `/gf apikey <キー>` | 無料Geminiキー登録（OP、表示はマスク） |
 
-キーあり：Geminiを非同期で呼ぶ（ラグなし）。位置・体力・満腹度＋直近の会話を把握。キーなし（通信エラー時も）オフラインで日本語回答。言語は `/gf lang`（`vi` | `en` | `ja`）。メモリはサーバー停止時に `config/mcgf_history.json` に保存、起動時に復元（プレイヤー別）。無料キーは https://aistudio.google.com/apikey。
+キーあり：Geminiを非同期で呼ぶ（ラグなし）。位置・体力・満腹度＋直近の会話を把握。キーなし（通信エラー時も）オフラインで日本語回答。言語は `/gf lang`（`vi` | `en` | `ja` | `fr`）。メモリはサーバー停止時に `config/mcgf_history.json` に保存、起動時に復元（プレイヤー別）。無料キーは https://aistudio.google.com/apikey。
 
 ### その他
 
@@ -107,7 +107,7 @@
 | `/gf hello` | 挨拶 |
 | `/gf config` | 設定表示 |
 | `/gf prefix <p>` | プレフィックス変更（OP） |
-| `/gf lang vi\|en\|ja` | AI言語（ベトナム語/英語/日本語） |
+| `/gf lang vi\|en\|ja\|fr` | AI言語（ベトナム語/英語/日本語/フランス語） |
 | `/gf version` | バージョン表示 |
 
 ## スキン

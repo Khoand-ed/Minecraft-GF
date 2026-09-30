@@ -1,6 +1,6 @@
 # MCGF AI Companion
 
-> English | [Tiếng Việt](README.vi.md) | [日本語](README.ja.md)
+> English | [Tiếng Việt](README.vi.md) | [日本語](README.ja.md) | [Français](README.fr.md)
 
 A companion mod for **Minecraft 1.21.1 Java Edition (Fabric)**. Spawn a human-like buddy that follows you, fights with you, mines, farms, chats with AI, and carries its own inventory.
 
@@ -97,7 +97,7 @@ Talk with the prefix (default `@gf`) anywhere in chat:
 | `/gf ai on\|off` | Toggle online AI (needs OP) |
 | `/gf apikey <key>` | Save a free Gemini key (needs OP, key is masked) |
 
-How it works: with a key it calls Gemini (async, no server lag) and knows your position, health and hunger plus recent conversation. Without a key (or if the network fails) it answers offline. AI language follows `/gf lang` (`vi` | `en` | `ja`) for both online and offline replies. Memory is saved to `config/mcgf_history.json` on server stop and reloaded on start — each player has their own memory. Get a free key at https://aistudio.google.com/apikey.
+How it works: with a key it calls Gemini (async, no server lag) and knows your position, health and hunger plus recent conversation. Without a key (or if the network fails) it answers offline. AI language follows `/gf lang` (`vi` | `en` | `ja` | `fr`) for both online and offline replies. Memory is saved to `config/mcgf_history.json` on server stop and reloaded on start — each player has their own memory. Get a free key at https://aistudio.google.com/apikey.
 
 ### Misc
 
@@ -107,7 +107,7 @@ How it works: with a key it calls Gemini (async, no server lag) and knows your p
 | `/gf hello` | Greeting |
 | `/gf config` | Show current settings |
 | `/gf prefix <p>` | Change the chat prefix (needs OP) |
-| `/gf lang vi\|en\|ja` | AI reply language (Vietnamese / English / Japanese) |
+| `/gf lang vi\|en\|ja\|fr` | AI reply language (Vietnamese / English / Japanese / French) |
 | `/gf version` | Show mod version |
 
 ## Skins

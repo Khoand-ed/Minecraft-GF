@@ -94,7 +94,7 @@ public final class GfCommands {
                                             + "§6◆ Khác:§r\n"
                                             + "§e/gf say <text>§r nhắc lại | §e/gf hello§r chào\n"
                                             + "§e/gf config§r xem cấu hình | §e/gf prefix <p>§r đổi prefix (OP)\n"
-                                            + "§e/gf lang vi|en|ja§r ngôn ngữ AI | §e/gf version§r xem version"),
+                                            + "§e/gf lang vi|en|ja|fr§r ngôn ngữ AI | §e/gf version§r xem version"),
                                     false);
                             return 1;
                         }))
@@ -108,7 +108,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.4.1 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.4.2 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -420,8 +420,8 @@ public final class GfCommands {
                         .then(CommandManager.literal("lang")
                                 .then(CommandManager.argument("l", StringArgumentType.word()).executes(ctx -> {
                                     String l = StringArgumentType.getString(ctx, "l").toLowerCase(Locale.ROOT);
-                                    if (!l.equals("vi") && !l.equals("en") && !l.equals("ja")) {
-                                        ctx.getSource().sendError(Text.literal("Dung: /gf lang vi|en|ja"));
+                                    if (!l.equals("vi") && !l.equals("en") && !l.equals("ja") && !l.equals("fr")) {
+                                        ctx.getSource().sendError(Text.literal("Dung: /gf lang vi|en|ja|fr"));
                                         return 0;
                                     }
                                     GfConfig.get().language = l;

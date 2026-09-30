@@ -1,6 +1,6 @@
 # MCGF AI Companion
 
-> [English](README.md) | Tiếng Việt | [日本語](README.ja.md)
+> [English](README.md) | Tiếng Việt | [日本語](README.ja.md) | [Français](README.fr.md)
 
 Mod bạn đồng hành cho **Minecraft 1.21.1 Java Edition (Fabric)**. Gọi ra một người bạn dáng người: đi theo, chiến đấu, đào mỏ, farm, trò chuyện AI và mang kho đồ riêng.
 
@@ -97,7 +97,7 @@ Gõ prefix (mặc định `@gf`) ở bất kỳ đâu trên chat:
 | `/gf ai on\|off` | Bật/tắt AI online (cần OP) |
 | `/gf apikey <key>` | Nạp key Gemini miễn phí (cần OP, key che ****) |
 
-Có key thì gọi Gemini (async, không lag server), biết vị trí/máu/độ đói + hội thoại gần đây. Không key (hoặc lỗi mạng) thì trả lời offline. Ngôn ngữ AI theo `/gf lang` (`vi` | `en` | `ja`) cho cả online lẫn offline. Trí nhớ lưu ở `config/mcgf_history.json` khi tắt server, mở lại tự nạp — mỗi player một trí nhớ. Lấy key miễn phí tại https://aistudio.google.com/apikey.
+Có key thì gọi Gemini (async, không lag server), biết vị trí/máu/độ đói + hội thoại gần đây. Không key (hoặc lỗi mạng) thì trả lời offline. Ngôn ngữ AI theo `/gf lang` (`vi` | `en` | `ja` | `fr`) cho cả online lẫn offline. Trí nhớ lưu ở `config/mcgf_history.json` khi tắt server, mở lại tự nạp — mỗi player một trí nhớ. Lấy key miễn phí tại https://aistudio.google.com/apikey.
 
 ### Linh tinh
 
@@ -107,7 +107,7 @@ Có key thì gọi Gemini (async, không lag server), biết vị trí/máu/đ�
 | `/gf hello` | Chào |
 | `/gf config` | Xem cấu hình |
 | `/gf prefix <p>` | Đổi prefix chat (cần OP) |
-| `/gf lang vi\|en\|ja` | Ngôn ngữ AI (Việt / Anh / Nhật) |
+| `/gf lang vi\|en\|ja\|fr` | Ngôn ngữ AI (Việt / Anh / Nhật / Pháp) |
 | `/gf version` | Xem version |
 
 ## Skin
