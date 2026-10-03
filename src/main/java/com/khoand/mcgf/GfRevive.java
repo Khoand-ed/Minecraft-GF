@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -125,6 +126,44 @@ public final class GfRevive {
             owner.sendMessage(Text.literal("§c[" + name + "]§r Tui ngã rồi... tại ("
                     + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ") " + dim
                     + ". Đồ tui rớt tại chỗ đó, bạn ra nhặt lại nha!"), false);
+        }
+    }
+
+    /**
+     * Module 9c — Tu hoi sinh sau autoReviveMinutes (0 = tat).
+     * Goi moi 20 tick tu MinecraftGFMod.
+     */
+    public static void tickAuto(MinecraftServer server) {
+        if (DEATHS.isEmpty()) {
+            return;
+        }
+        int minutes = GfConfig.get().autoReviveMinutes;
+        if (minutes <= 0) {
+            return;
+        }
+        long need = (long) minutes * 1200L;
+        long now = server.getOverworld().getTime();
+        for (var it = DEATHS.entrySet().iterator(); it.hasNext();) {
+            var e = it.next();
+            ServerPlayerEntity player = server.getPlayerManager().getPlayer(e.getKey());
+            if (player == null) {
+                continue;
+            }
+            GfCompanionEntity alive = GfCompanionManager.findOwned(player);
+            if (alive != null && !alive.isRemoved()) {
+                it.remove();
+                continue;
+            }
+            if (now - e.getValue().time < need) {
+                continue;
+            }
+            it.remove();
+            REVIVE_COOLDOWN.remove(e.getKey());
+            GfCompanionEntity pet = GfCompanionManager.summon(player);
+            if (pet != null) {
+                player.sendMessage(Text.literal("§b[" + GfConfig.get().companionName
+                        + "]§r Tui tự sống lại rồi nè! Đồ cũ vẫn nằm ở chỗ ngã, ra nhặt nha!"), false);
+            }
         }
     }
 }

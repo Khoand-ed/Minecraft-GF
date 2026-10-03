@@ -53,6 +53,8 @@ S'il **meurt**, sac + équipement tombent sur place (vraies règles survie), coo
 | `/gf revive` | Le ressuscite à côté de vous (60s d'attente, drops restés sur place) |
 | `/gf grave` | Voir où il est tombé |
 
+Sans commande il **revient tout seul après 5 minutes** (`autoReviveMinutes` dans la config, `0` = off).
+
 ### Combat & survie
 
 | Commande | Effet |

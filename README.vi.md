@@ -53,6 +53,8 @@ Pet ngã thì kho + giáp rớt tại chỗ ngã, bạn nhận tọa độ trên
 | `/gf revive` | Hồi sinh pet cạnh bạn (chờ 60s, đồ vẫn nằm chỗ ngã) |
 | `/gf grave` | Xem chỗ ngã gần nhất |
 
+Không cần lệnh cũng **tự sống lại sau 5 phút** (`autoReviveMinutes` trong config, `0` = tắt).
+
 ### Chiến đấu & sinh tồn
 
 | Lệnh | Chức năng |

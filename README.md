@@ -53,6 +53,8 @@ If it **dies**, its bag + equipped gear drop at the death spot (real survival ru
 | `/gf revive` | Respawn it next to you (60s cooldown, drops stay where it died) |
 | `/gf grave` | Show where it last died |
 
+Without commands it also **auto-revives after 5 minutes** (`autoReviveMinutes` in config, `0` = off).
+
 ### Combat & survival
 
 | Command | What it does |

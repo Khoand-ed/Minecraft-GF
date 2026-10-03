@@ -111,7 +111,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.5.1 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.5.2 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -417,7 +417,9 @@ public final class GfCommands {
                                             + "§7- Skin: §e" + c.skinFile
                                             + ((c.skinUrl == null || c.skinUrl.isBlank())
                                                     ? " (hoac mac dinh)" : " / URL da nap") + "\n"
-                                            + "§7- Ngon ngu AI: §e" + c.language),
+                                            + "§7- Ngon ngu AI: §e" + c.language + "\n"
+                                            + "§7- Tu hoi sinh: §e" + (c.autoReviveMinutes <= 0
+                                                    ? "tat" : c.autoReviveMinutes + " phut")),
                                     false);
                             return 1;
                         }))
