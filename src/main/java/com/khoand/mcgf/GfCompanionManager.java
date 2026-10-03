@@ -48,6 +48,25 @@ public final class GfCompanionManager {
                     + "]§r Toi dang o day roi! Dung /gf here de keo toi ve."), false);
             return 0;
         }
+        GfCompanionEntity pet = summon(player);
+        if (pet == null) {
+            return 0;
+        }
+        String name = GfConfig.get().companionName;
+        player.sendMessage(Text.literal("§b[" + name + "]§r Da xuat hien! Toi se di theo va chien dau cung ban. "
+                + "Dung /gf help de xem lenh."), false);
+        return 1;
+    }
+
+    /**
+     * Module 9 — Tao pet moi canh player (dung chung cho spawn + revive).
+     * Tra ve null neu da co pet song.
+     */
+    public static GfCompanionEntity summon(ServerPlayerEntity player) {
+        GfCompanionEntity old = findOwned(player);
+        if (old != null && !old.isRemoved()) {
+            return null;
+        }
         ServerWorld world = player.getServerWorld();
         GfCompanionEntity pet = new GfCompanionEntity(GfEntities.COMPANION, world);
         pet.refreshPositionAndAngles(player.getX() + 1.0, player.getY(), player.getZ() + 1.0,
@@ -63,9 +82,8 @@ public final class GfCompanionManager {
         // Tang nhe de thay ro luc spawn (het sau 10 giay).
         pet.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 200, 0, false, false));
         world.spawnEntity(pet);
-        player.sendMessage(Text.literal("§b[" + name + "]§r Da xuat hien! Toi se di theo va chien dau cung ban. "
-                + "Dung /gf help de xem lenh."), false);
-        return 1;
+        GfRevive.clearDeath(player.getUuid());
+        return pet;
     }
 
     public static int setFollow(ServerPlayerEntity player, boolean follow) {

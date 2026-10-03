@@ -46,6 +46,8 @@ A companion mod for **Minecraft 1.21.1 Java Edition (Fabric)**. Spawn a human-li
 
 If it gets lost far away (over `teleportDistance`, default 24 blocks) it teleports back by itself.
 
+If it **dies**, its bag + equipped gear drop at the death spot (real survival rules) and you get the coordinates in chat. See revive below.
+
 ### Combat & survival
 
 | Command | What it does |

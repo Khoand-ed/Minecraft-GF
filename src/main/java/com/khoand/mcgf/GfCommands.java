@@ -108,7 +108,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.4.2 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.5.0 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))

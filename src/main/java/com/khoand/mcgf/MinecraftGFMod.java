@@ -1,6 +1,7 @@
 package com.khoand.mcgf;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import org.slf4j.Logger;
@@ -25,6 +26,12 @@ public class MinecraftGFMod implements ModInitializer {
         GfEntities.register();
         GfCommands.register();
         GfBrain.register();
+        // Module 9a: pet nga thi rot do + bao chu.
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+            if (entity instanceof GfCompanionEntity pet) {
+                GfRevive.onDeath(pet);
+            }
+        });
         // Module 5: nap/luu tri nho AI khi mo/tat server.
         ServerLifecycleEvents.SERVER_STARTED.register(server -> GfBrain.loadHistory());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> GfBrain.saveHistory());
