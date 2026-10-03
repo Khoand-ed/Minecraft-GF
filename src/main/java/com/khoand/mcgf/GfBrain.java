@@ -322,7 +322,8 @@ public final class GfBrain {
                 + "/gf mine (đào block đang nhìn), /gf collect (nhặt đồ rơi), /gf feed (cho ăn thịt), "
                 + "/gf minevein (đào cả vỉa quặng), /gf chop (đốn cây), /gf farm (thu lúa + trồng lại), "
                 + "/gf bag (xem kho pet), /gf give (lấy đồ từ kho pet), /gf deposit (cất vào rương gần nhất), "
-                + "/gf equip (mặc vũ khí/giáp tốt nhất, dame và giáp tính thật), /gf unequip (cởi đồ), /gf gear (xem đồ). "
+                + "/gf equip (mặc vũ khí/giáp tốt nhất, dame và giáp tính thật), /gf unequip (cởi đồ), /gf gear (xem đồ), "
+                + "/gf revive (hồi sinh, chờ 60s), /gf grave (xem chỗ ngã). "
                 + "Khi được hỏi cách chơi, hướng dẫn ngắn gọn đúng các lệnh này.";
     }
 
@@ -393,8 +394,11 @@ public final class GfBrain {
         if (contains(q, "clé", "api", "gemini", "ligne", "intelligent", "en ligne")) {
             return "Demande à un OP de taper /gf apikey <clé Gemini gratuite> et je deviendrai bien plus malin ! Là je réponds hors-ligne.";
         }
+        if (contains(q, "mourir", "mort", "décès", "ressusciter", "revive", "tombe", "tombé")) {
+            return "Si je meurs, mes affaires tombent où je suis tombé — va les ramasser ! Tape /gf revive pour me ressusciter (60s d'attente), /gf grave pour voir l'endroit !";
+        }
         if (contains(q, "aide", "commande", "comment", "utiliser", "help")) {
-            return "Commandes : /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Discute avec @gf + question !";
+            return "Commandes : /gf spawn, follow, stay, here, goto, dismiss, revive, grave, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Discute avec @gf + question !";
         }
         if (contains(q, "merci")) {
             return "De rien ! Partir à l'aventure avec toi, c'est le meilleur !";
@@ -442,8 +446,11 @@ public final class GfBrain {
         if (contains(q, "key", "api", "gemini", "online", "smart")) {
             return "Ask an OP to run /gf apikey <free Gemini key> and I'll get way smarter! Right now I'm answering offline.";
         }
+        if (contains(q, "die", "died", "death", "dead", "revive", "respawn", "grave", "rip")) {
+            return "If I die, my stuff drops where I fell — go pick it up! Type /gf revive to bring me back (60s cooldown), /gf grave to see where I fell!";
+        }
         if (contains(q, "help", "command", "how", "use")) {
-            return "Commands: /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Chat with @gf + question!";
+            return "Commands: /gf spawn, follow, stay, here, goto, dismiss, revive, grave, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear. Chat with @gf + question!";
         }
         if (contains(q, "thank")) {
             return "Anytime! Adventuring with you is the best!";
@@ -491,8 +498,11 @@ public final class GfBrain {
         if (contains(q, "キー", "api", "gemini", "オンライン", "賢い", "かしこい")) {
             return "OPの人に /gf apikey <無料のGeminiキー> を入力してもらうと、もっと賢くなるよ！今はオフライン回答中！";
         }
+        if (contains(q, "死ぬ", "しぬ", "死んだ", "しんだ", "死亡", "リバイブ", "復活", "ふっかつ", "墓", "はか", "リスポーン", "殺された")) {
+            return "僕が倒れたら持ち物はその場に落ちるよ。拾いに行ってね！/gf revive で復活（60秒待ち）、/gf grave で倒れた場所を確認！";
+        }
         if (contains(q, "ヘルプ", "助けて", "たすけて", "コマンド", "使い方", "つかいかた")) {
-            return "コマンド: /gf spawn, follow, stay, here, goto, dismiss, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear。@gf + 質問でおしゃべり！";
+            return "コマンド: /gf spawn, follow, stay, here, goto, dismiss, revive, grave, attack, stop, mine, collect, feed, minevein, chop, farm, bag, give, deposit, equip, unequip, gear。@gf + 質問でおしゃべり！";
         }
         if (contains(q, "ありがとう")) {
             return "どういたしまして！君と冒険するのが一番楽しいよ！";
@@ -537,11 +547,14 @@ public final class GfBrain {
         if (contains(q, "kho", "túi pet", "tui pet", "give", "deposit", "rương", "ruong", "cất", "cat", "chặt", "chat cay", "đốn", "don", "farm", "trồng", "trong lua", "lúa")) {
             return "Tui có kho riêng 9 ô nè! /gf minevein đào quặng, /gf chop đốn cây, /gf farm thu lúa (tự trồng lại), /gf bag xem kho, /gf give lấy đồ, /gf deposit cất vào rương gần nhất!";
         }
+        if (contains(q, "chết", "chet", "ngã", "nga", "revive", "hồi sinh", "hoi sinh", "sống lại", "song lai", "mộ", "mo")) {
+            return "Tui ngã thì đồ rớt tại chỗ đó, bạn ra nhặt lại nha! Gõ /gf revive để hồi sinh tui (chờ 60s), /gf grave để xem chỗ ngã!";
+        }
         if (contains(q, "lệnh", "lenh", "giúp", "giup", "help", "dùng", "dung")) {
             return "Lệnh nè: /gf spawn, /gf follow, /gf stay, /gf here, /gf goto x y z, /gf dismiss, "
                     + "/gf attack, /gf stop, /gf mine, /gf collect, /gf feed, "
                     + "/gf minevein, /gf chop, /gf farm, /gf bag, /gf give, /gf deposit, "
-                    + "/gf equip, /gf unequip, /gf gear. "
+                    + "/gf equip, /gf unequip, /gf gear, /gf revive, /gf grave. "
                     + "Chat thì gõ @gf + câu hỏi!";
         }
         if (contains(q, "cảm ơn", "cam on", "thanks", "thank")) {

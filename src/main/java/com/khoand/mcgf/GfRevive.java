@@ -21,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 public final class GfRevive {
     /** Lan nga gan nhat theo tung chu (de M9b/M9c dung). */
     private static final Map<UUID, DeathInfo> DEATHS = new ConcurrentHashMap<>();
+    /** Cooldown hoi sinh: 60 giay (1200 tick). */
+    private static final Map<UUID, Long> REVIVE_COOLDOWN = new ConcurrentHashMap<>();
 
     private GfRevive() {
     }
@@ -43,6 +45,51 @@ public final class GfRevive {
 
     public static void clearDeath(UUID owner) {
         DEATHS.remove(owner);
+    }
+
+    /** Hoi sinh pet canh player. Do rot van nam o cho nga (chu tu nhat lai). */
+    public static int revive(ServerPlayerEntity player) {
+        GfCompanionEntity alive = GfCompanionManager.findOwned(player);
+        if (alive != null && !alive.isRemoved()) {
+            player.sendMessage(Text.literal("§b[" + GfConfig.get().companionName
+                    + "]§r Tui vẫn sống nhăn đây, khỏi hồi sinh!"), false);
+            return 0;
+        }
+        long now = player.getServerWorld().getTime();
+        Long last = REVIVE_COOLDOWN.get(player.getUuid());
+        if (last != null && now - last < 1200) {
+            long wait = (1200 - (now - last) + 19) / 20;
+            player.sendMessage(Text.literal("§b[MCGF]§r Hồi sinh đang hồi (" + wait
+                    + "s nữa). Bình tĩnh!"), false);
+            return 0;
+        }
+        GfCompanionEntity pet = GfCompanionManager.summon(player);
+        if (pet == null) {
+            return 0;
+        }
+        REVIVE_COOLDOWN.put(player.getUuid(), now);
+        String name = GfConfig.get().companionName;
+        DeathInfo d = DEATHS.get(player.getUuid());
+        DEATHS.remove(player.getUuid());
+        player.sendMessage(Text.literal("§b[" + name + "]§r Tui sống lại rồi! "
+                + (d != null ? "Đồ tui vẫn nằm ở chỗ ngã (" + d.pos.getX() + ", " + d.pos.getY()
+                        + ", " + d.pos.getZ() + "), ra nhặt lại nha!" : "Chiến tiếp thôi!")),
+                false);
+        return 1;
+    }
+
+    /** Xem cho nga gan nhat. */
+    public static int grave(ServerPlayerEntity player) {
+        DeathInfo d = DEATHS.get(player.getUuid());
+        if (d == null) {
+            player.sendMessage(Text.literal("§b[MCGF]§r Không có dữ liệu ngã. "
+                    + "Pet còn sống thì dùng /gf here để kéo về!"), false);
+            return 0;
+        }
+        player.sendMessage(Text.literal("§b[MCGF]§r Pet ngã tại (" + d.pos.getX() + ", "
+                + d.pos.getY() + ", " + d.pos.getZ() + ") " + d.dim
+                + ". Đồ rớt quanh đó — /gf revive để hồi sinh pet mới!"), false);
+        return 1;
     }
 
     /** Goi khi pet vua nga: rot do + nhan chu + ghi nhan. */

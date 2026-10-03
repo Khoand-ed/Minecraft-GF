@@ -46,6 +46,13 @@ Mod bạn đồng hành cho **Minecraft 1.21.1 Java Edition (Fabric)**. Gọi ra
 
 Lạc quá `teleportDistance` (mặc định 24 block) thì tự teleport về.
 
+Pet ngã thì kho + giáp rớt tại chỗ ngã, bạn nhận tọa độ trên chat.
+
+| Lệnh | Chức năng |
+|---|---|
+| `/gf revive` | Hồi sinh pet cạnh bạn (chờ 60s, đồ vẫn nằm chỗ ngã) |
+| `/gf grave` | Xem chỗ ngã gần nhất |
+
 ### Chiến đấu & sinh tồn
 
 | Lệnh | Chức năng |

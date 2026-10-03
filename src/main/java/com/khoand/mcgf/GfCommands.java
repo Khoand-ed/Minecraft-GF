@@ -29,6 +29,8 @@ import net.minecraft.text.Text;
  * /gf here              — keo ve canh ban (M2)
  * /gf goto &lt;x&gt; &lt;y&gt; &lt;z&gt;  — den toa do va dung yen (M2)
  * /gf dismiss           — cho bien mat (M2)
+ * /gf revive            — hoi sinh pet (M9b, cooldown 60s)
+ * /gf grave             — xem cho nga gan nhat (M9b)
  * /gf ask &lt;cau hoi&gt;     — hoi AI (M3, nhu chat @gf)
  * /gf ai on|off         — bat/tat AI online (M3, can OP)
  * /gf forget            — xoa tri nho hoi-dap (M3)
@@ -75,6 +77,7 @@ public final class GfCommands {
                                             + "§6◆ Companion:§r\n"
                                             + "§e/gf spawn§r gọi ra | §e/gf follow§r đi theo | §e/gf stay§r đứng yên\n"
                                             + "§e/gf here§r kéo về | §e/gf dismiss§r cho về\n"
+                                            + "§e/gf revive§r hồi sinh (60s) | §e/gf grave§r xem chỗ ngã\n"
                                             + "§e/gf goto <x> <y> <z>§r đến tọa độ | §e/gf name <tên>§r đổi tên\n"
                                             + "§6◆ Chiến đấu & sinh tồn:§r\n"
                                             + "§e/gf attack§r đánh quái gần nhất | §e/gf stop§r dừng\n"
@@ -108,7 +111,7 @@ public final class GfCommands {
                         }))
                         .then(CommandManager.literal("version").executes(ctx -> {
                             ctx.getSource().sendFeedback(
-                                    () -> Text.literal("§b[MCGF]§r 1.5.0 | MC 1.21.1 Fabric | Java 21"),
+                                    () -> Text.literal("§b[MCGF]§r 1.5.1 | MC 1.21.1 Fabric | Java 21"),
                                     false);
                             return 1;
                         }))
@@ -319,6 +322,23 @@ public final class GfCommands {
                                 return 0;
                             }
                             return GfGear.showGear(player);
+                        }))
+                        // ---- Module 9b: hoi sinh ----
+                        .then(CommandManager.literal("revive").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfRevive.revive(player);
+                        }))
+                        .then(CommandManager.literal("grave").executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                            if (player == null) {
+                                ctx.getSource().sendError(Text.literal("Lenh nay chi dung in-game."));
+                                return 0;
+                            }
+                            return GfRevive.grave(player);
                         }))
                         // ---- Module 3: AI ----
                         .then(CommandManager.literal("ask")

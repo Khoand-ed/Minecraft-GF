@@ -46,6 +46,13 @@ Mod compagnon pour **Minecraft 1.21.1 Java Edition (Fabric)**. Invoquez un compa
 
 S'il se perd trop loin (au-delà de `teleportDistance`, 24 blocs par défaut), il se téléporte tout seul.
 
+S'il **meurt**, sac + équipement tombent sur place (vraies règles survie), coordonnées dans le chat.
+
+| Commande | Effet |
+|---|---|
+| `/gf revive` | Le ressuscite à côté de vous (60s d'attente, drops restés sur place) |
+| `/gf grave` | Voir où il est tombé |
+
 ### Combat & survie
 
 | Commande | Effet |
